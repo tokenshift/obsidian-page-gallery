@@ -3,7 +3,9 @@
 	"version": "1.0.0",
 	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
+	"type": "module",
 	"scripts": {
+		"test": "jest",
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
@@ -12,27 +14,25 @@
 	"author": "Nathan Clark",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/defaults": "1.0.3",
-		"@types/minimatch": "^5.1.2",
+		"@types/jest": "^29.2.0",
+		"@types/mime-types": "^2.1.1",
 		"@types/node": "^16.11.6",
 		"@types/object-path": "^0.11.1",
 		"@typescript-eslint/eslint-plugin": "5.29.0",
 		"@typescript-eslint/parser": "5.29.0",
 		"builtin-modules": "3.3.0",
 		"esbuild": "0.14.47",
+		"jest": "^29.2.2",
 		"obsidian": "latest",
 		"obsidian-dataview": "^0.5.47",
+		"ts-jest": "^29.0.3",
+		"ts-node": "^10.9.1",
 		"tslib": "2.4.0",
-		"typescript": "4.7.4"
+		"typescript": "^4.7.4"
 	},
 	"dependencies": {
-		"@types/mime-types": "^2.1.1",
-		"D": "^1.0.0",
 		"deepmerge": "^4.2.2",
-		"defaults": "1.0.3",
-		"grey-matter": "^0.0.0",
 		"mime-types": "^2.1.35",
-		"minimatch": "^5.1.0",
 		"object-path": "^0.11.8",
 		"toml": "^3.0.0"
 	}

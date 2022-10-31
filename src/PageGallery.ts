@@ -1,53 +1,103 @@
-import mime from 'mime-types'
-import { DataviewApi } from 'obsidian-dataview'
-
-import Config, { Page } from './Config'
+import merge from 'deepmerge'
 import * as builder from './HTMLBuilder'
-import MarkdownGalleryItem from './MarkdownGalleryItem'
-import PageGalleryPlugin from './PageGalleryPlugin'
 
-export default class PageGallery {
-  plugin: PageGalleryPlugin
-  config: Config
+const DEFAULT_CONFIG: PageGalleryConfig = {
+  height: '18em',
+  width: '12em',
+  position: 'center',
+  repeat: 'none',
+  size: 'cover'
+}
 
-  constructor (plugin: PageGalleryPlugin, config: Config) {
-    this.plugin = plugin
-    this.config = config
+export type PageGalleryConfig = {
+  height?: string
+  width?: string
+  position?: string
+  repeat?: string
+  size?: string
+}
+
+export type PageGalleryTile = {
+  href: string
+  imageUrl: string | null
+  filename: string
+  fields?: Array<PageGalleryField>
+}
+
+export type PageGalleryField = {
+  name: string
+  value: string
+  render: (container: HTMLElement) => void
+}
+
+export default class PageGalleryModel {
+  config: PageGalleryConfig
+  tiles: Array<PageGalleryTile>
+
+  constructor (options: {
+    config?: PageGalleryConfig,
+    tiles?: Array<PageGalleryTile>
+  } = {}) {
+    this.config = merge(DEFAULT_CONFIG, options.config || {})
+    this.tiles = options.tiles || []
   }
 
-  async render (api: DataviewApi) {
-    const pages = Array.from(this.config.from ? api.pages(this.config.from) : api.pages())
-    pages.sort(this.config.getSortFn())
-
-    return await builder.div({ class: 'page-gallery' }, async div => {
+  render (): Node {
+    return builder.div({ class: 'page-gallery' }, div => {
       div.style({
-        'grid-template-columns': `repeat(auto-fill, minmax(${this.config.image.width}, 1fr))`
+        'grid-template-columns': `repeat(auto-fill, minmax(${this.config.width}, 1fr))`
       })
 
-      let count = 0
-      for (const page of pages) {
-        if (this.config.limit && count >= this.config.limit) {
-          break
-        }
+      for (const tile of this.tiles) {
+        div.div({ class: 'page-gallery__tile' }, div => {
+          div.style({
+            width: this.config.width
+          })
 
-        const item = await this.getItem(page)
-        const rendered = await item?.render(api)
-        if (rendered) {
-          div.appendChild(rendered)
-          ++count
-        }
+          if (tile.imageUrl) {
+            div.a({
+              class: 'page-gallery__image internal-link',
+              'data-href': tile.href,
+              href: tile.href,
+              target: '_blank',
+              rel: 'noopener',
+              style: {
+                'background-position': this.config.position,
+                'background-size': this.config.size,
+                'background-image': `url('${tile.imageUrl}')`,
+                'height': this.config.height,
+                'width': this.config.width
+              }
+            })
+          } else {
+            div.a({
+              class: 'page-gallery__fallback internal-link',
+              'data-href': tile.href,
+              href: tile.href,
+              target: '_blank',
+              rel: 'noopener',
+              style: {
+                height: this.config.height,
+                width: this.config.width
+              },
+              text: tile.filename
+            })
+          }
 
+          if (Array.isArray(tile.fields) && tile.fields.length > 0) {
+            div.div({ class: 'page-gallery__fields' }, div => {
+              for (const field of tile.fields as Array<PageGalleryField>) {
+                div.div({
+                  class: 'page-gallery__field',
+                  'data-page-gallery-field-name': field.name
+                }, div => {
+                  field.render(div.root as HTMLElement)
+                })
+              }
+            })
+          }
+        })
       }
     })
-  }
-
-  async getItem (page: Page) {
-    const mimeType = mime.lookup(page.file.path)
-
-    if (mimeType === 'text/markdown') {
-      return new MarkdownGalleryItem(this.plugin, this.config, page)
-    } else {
-      return null
-    }
   }
 }

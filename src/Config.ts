@@ -2,9 +2,8 @@ import merge from 'deepmerge'
 import * as toml from 'toml'
 
 const DEFAULT_CONFIG = {
-  from: null,
   fields: [],
-  limit: null,
+  limit: 100,
 
   image: {
     height: '18em',
@@ -19,9 +18,9 @@ const DEFAULT_CONFIG = {
 export type Page = Record<string, any>
 
 export default class Config {
-  from: string | null
-  fields: Array<string>
-  limit: number | null
+  from?: string
+  fields?: Array<string>
+  limit?: number
 
   image: {
     height: string

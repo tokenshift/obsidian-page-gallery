@@ -1,4 +1,4 @@
-import * as builder from 'src/HTMLBuilder'
+import * as builder from './HTMLBuilder'
 
 export function missingObsidianDataview () {
   return  builder.span({}, span => {
