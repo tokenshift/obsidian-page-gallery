@@ -25,41 +25,11 @@ export default class PageGalleryPlugin extends Plugin {
 			const config = Config.parse(source)
 			const child = new PageGalleryRenderChild(this, config, this.api, el)
 			ctx.addChild(child)
-
-			child.render(config, this.api)
+			child.render()
 		} catch (err) {
 			const pre = document.createElement('pre')
 			pre.innerText = err.stack ? err.stack : err.message
 			el.append(pre)
 		}
-
-		// const reRender = debounce(async () => {
-		// 	try {
-		// 		const config = Config.parse(source)
-		// 		const gallery = await this.getPageGallery(config)
-		// 		const rendered = gallery.render()
-
-		// 		// while (el.firstChild) {	el.removeChild(el.firstChild)	}
-		// 		el.appendChild(rendered)
-		// 	} catch (err) {
-		// 		const pre = document.createElement('pre')
-		// 		pre.innerText = err.stack ? err.stack : err.message
-
-		// 		// while (el.firstChild) {	el.removeChild(el.firstChild)	}
-		// 		el.append(pre)
-		// 	}
-		// }, DEBOUNCE_RENDER_TIME)
-
-		// this.registerEvent(this.app.metadataCache.on('dataview:index-ready', () => {
-		// 	console.log('dataview:index-ready')
-		// 	reRender()
-		// }))
-
-		// this.registerEvent(this.app.metadataCache.on('dataview:metadata-change', () => {
-		// 	console.log('dataview:metadata-change')
-		// 	reRender()
-		// }))
-
-		// reRender()
 	}
 }

@@ -1,7 +1,9 @@
 import debounce from 'debounce'
 import mime from 'mime-types'
-import path from 'path'
 import objectPath from 'object-path'
+import path from 'path'
+import { ulid } from 'ulid'
+
 import { MarkdownPreviewView, MarkdownRenderChild, TFile } from 'obsidian';
 import { DataviewApi } from 'obsidian-dataview';
 
@@ -17,9 +19,10 @@ const IMG_MIME_TYPES = [
 ]
 
 type Page = Record<string, any>
-type RenderFunc = (config: Config, api: DataviewApi) => Promise<void>
+type RenderFunc = () => Promise<void>
 
 export default class PageGalleryRenderChild extends MarkdownRenderChild {
+  id = ulid()
   plugin: PageGalleryPlugin
   config: Config
   api: DataviewApi
@@ -33,17 +36,25 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
   }
 
   onload () {
-    console.log('PageGalleryRenderChild#onload')
+		this.registerEvent(this.plugin.app.metadataCache.on('dataview:metadata-change' as 'resolved', async () => {
+			await this.render()
+		}))
+
+		this.registerEvent(this.plugin.app.metadataCache.on('dataview:index-ready' as 'resolved', async () => {
+			await this.render()
+		}))
   }
 
-  onunload(): void {
-    console.log('PageGalleryRenderChild#onunload')
+  clear () {
+    while (this.containerEl.firstChild) {
+      this.containerEl.removeChild(this.containerEl.firstChild)
+    }
   }
 
   render: RenderFunc = debounce(async () => {
     const gallery = await this.getPageGallery(this.config)
 		const rendered = gallery.render()
-		// while (el.firstChild) {	el.removeChild(el.firstChild)	}
+    this.clear()
     this.containerEl.appendChild(rendered)
 
   }, DEBOUNCE_RENDER_TIME)
