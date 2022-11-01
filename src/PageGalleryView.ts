@@ -30,7 +30,7 @@ export type PageGalleryField = {
   render: (container: HTMLElement) => void
 }
 
-export default class PageGalleryModel {
+export default class PageGalleryView {
   config: PageGalleryConfig
   tiles: Array<PageGalleryTile>
 

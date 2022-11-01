@@ -14,6 +14,7 @@
 	"author": "Nathan Clark",
 	"license": "MIT",
 	"devDependencies": {
+		"@types/debounce": "^1.2.1",
 		"@types/jest": "^29.2.0",
 		"@types/mime-types": "^2.1.1",
 		"@types/node": "^16.11.6",
@@ -31,6 +32,7 @@
 		"typescript": "^4.7.4"
 	},
 	"dependencies": {
+		"debounce": "^1.2.1",
 		"deepmerge": "^4.2.2",
 		"mime-types": "^2.1.35",
 		"object-path": "^0.11.8",
