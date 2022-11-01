@@ -1,8 +1,8 @@
 {
-	"name": "obsidian-sample-plugin",
-	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
-	"main": "main.js",
+	"name": "obsidian-page-gallery",
+	"version": "0.0.1",
+	"description": "Creates an embeddable gallery based on selected page contents.",
+	"main": "./src/PageGalleryPlugin.ts",
 	"type": "module",
 	"scripts": {
 		"test": "jest",
