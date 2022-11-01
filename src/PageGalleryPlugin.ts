@@ -1,7 +1,7 @@
 import mime from 'mime-types'
 import objectPath from 'object-path'
 import * as path from 'path';
-import { MarkdownPostProcessorContext, MarkdownPreviewView, Notice, Plugin } from 'obsidian'
+import { MarkdownPostProcessorContext, MarkdownPreviewView, Notice, Plugin, TFile } from 'obsidian'
 import { DataviewApi, getAPI } from 'obsidian-dataview'
 import Config from './Config'
 import * as notices from './notices'
@@ -86,14 +86,10 @@ export default class PageGalleryPlugin extends Plugin {
 	}
 
 	async getFirstImageSrc (page: Page): Promise<string | null> {
-		// TODO: This seems really inefficient. Is there a better way to go from an obsidian-dataview page to a TFile?
-    const file = this.app.vault.getFiles().find(f => f.path === page.file.path)
-    if (!file) { return null }
+		const file = this.app.vault.getAbstractFileByPath(page.file.path)
+		if (!file) { return null }
 
-		// TODO: This is probably too inefficient to be worth it. Should probably
-		// just pick the image based on frontmatter, rather than parsing page
-		// contents.
-    const source = await this.app.vault.cachedRead(file)
+    const source = await this.app.vault.cachedRead(file as TFile)
     const rendered = document.createElement('div')
     MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this)
 
