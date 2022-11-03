@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+## Modified
+
+* Refactored to use [Svelte](https://svelte.dev/) for views.
+
 ## [0.0.2] - 2022-11-01
 
 ### Added
