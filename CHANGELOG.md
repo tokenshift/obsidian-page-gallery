@@ -1,6 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [0.1.0] - 2022-11-03
+
+### Added
+
+* Filter bar to search for pages by tags or name/path.
+
+## [0.0.3] - 2022-11-03
 
 ## Modified
 

@@ -11,6 +11,7 @@ import type  Config from './Config';
 import type PageGalleryPlugin from './PageGalleryPlugin';
 
 import PageGallery from './views/PageGallery.svelte'
+import { writable, type Writable } from 'svelte/store'
 
 const DEBOUNCE_RENDER_TIME = 500
 
@@ -42,6 +43,12 @@ export type FieldInfo = {
 	value: string
 	rendered: string
 }
+
+export type FilterState = {
+	query: Writable<string>
+	parsed: string[]
+}
+
 export default class PageGalleryRenderChild extends MarkdownRenderChild {
   id = ulid()
   plugin: PageGalleryPlugin
@@ -49,12 +56,19 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
   api: DataviewApi
 	gallery: PageGallery
 
+	filter: FilterState
+
   constructor (plugin: PageGalleryPlugin, config: Config, api: DataviewApi, el: HTMLElement) {
     super(el)
 
     this.plugin = plugin
     this.config = config
     this.api = api
+
+		this.filter = {
+			query: writable(''),
+			parsed: []
+		}
   }
 
 	updateTiles = debounce(async () => {
@@ -65,12 +79,20 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
 	}, DEBOUNCE_RENDER_TIME)
 
   async onload () {
+		const tiles: TileInfo[] = []
+
 		this.gallery = new PageGallery({
 			target: this.containerEl,
 			props: {
 				config: this.config.image,
-				tiles: []
+				query: this.filter.query,
+				tiles
 			}
+		})
+
+		this.filter.query.subscribe(q => {
+			this.filter.parsed = q.split(/\s+/).map(p => p.toLowerCase())
+			this.updateTiles()
 		})
 
 		this.updateTiles()
@@ -89,7 +111,30 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
 			? this.api.pages(this.config.from)
 			: this.api.pages())
     pages.sort(this.config.getSortFn())
-		return pages.slice(0, this.config.limit)
+		const filtered = pages.filter(p => this.matchFilter(p))
+		return filtered.slice(0, this.config.limit)
+	}
+
+	matchFilter (page: Page) {
+		for (const pattern of this.filter.parsed) {
+			if (pattern.startsWith('#')) {
+				// Match tags
+				for (const tag of page.file.tags) {
+					if (tag.toLowerCase().startsWith(pattern)) {
+						return true
+					}
+				}
+
+				return false
+			} else {
+				// Match path
+				if (!page.file.path.toLowerCase().contains(pattern)) {
+					return false
+				}
+			}
+		}
+
+		return true
 	}
 
 	async getTileInfo (page: Page): Promise<TileInfo> {
