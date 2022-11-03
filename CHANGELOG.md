@@ -8,7 +8,7 @@
 
 ## [0.0.3] - 2022-11-03
 
-## Modified
+### Modified
 
 * Refactored to use [Svelte](https://svelte.dev/) for views.
 
