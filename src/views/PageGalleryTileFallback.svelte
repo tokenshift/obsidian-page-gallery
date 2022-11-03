@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getContext } from "svelte";
-	import type { TileConfig, TileInfo } from "./PageGallery.svelte";
+
+	import type { TileConfig, TileInfo } from "src/PageGalleryRenderChild";
 
   export let tile: TileInfo
 

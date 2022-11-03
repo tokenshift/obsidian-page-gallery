@@ -1,8 +1,8 @@
 <script type="ts">
-	import type { TileConfig, TileInfo } from "src/PageGalleryRenderChild";
 	import { getContext } from "svelte";
 
-	import PageGalleryFields from "./PageGalleryFields.svelte";
+	import type { TileConfig, TileInfo } from "src/PageGalleryRenderChild";
+	import PageGalleryField from "./PageGalleryField.svelte";
 	import PageGalleryTileFallback from "./PageGalleryTileFallback.svelte";
 	import PageGalleryTileImage from "./PageGalleryTileImage.svelte";
 
@@ -30,6 +30,14 @@
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
   opacity: 1;
 }
+
+.page-gallery__fields {
+  padding: 0 0.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
 </style>
 
 <div class="page-gallery__tile" style:width={config.width}>
@@ -40,6 +48,10 @@
   {/if}
 
   {#if tile.fields.length > 0}
-  <PageGalleryFields {tile}></PageGalleryFields>
+  <div class="page-gallery__fields">
+    {#each tile.fields as field}
+    <PageGalleryField {field} />
+    {/each}
+  </div>
   {/if}
 </div>

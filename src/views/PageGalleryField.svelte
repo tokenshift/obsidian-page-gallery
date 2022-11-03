@@ -2,7 +2,6 @@
 	import type { FieldInfo } from "src/PageGalleryRenderChild";
 
   export let field: FieldInfo
-('container')
 </script>
 
 <style>

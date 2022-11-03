@@ -34,7 +34,7 @@ export type TileInfo = {
 	imageUrl: string | null
 	filename: string
 	path: string
-	fields?: FieldInfo[]
+	fields: FieldInfo[]
 }
 
 export type FieldInfo = {
@@ -68,9 +68,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
 		this.gallery = new PageGallery({
 			target: this.containerEl,
 			props: {
-				api: this.api,
 				config: this.config.image,
-				container: this,
 				tiles: []
 			}
 		})
@@ -99,7 +97,8 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
 			href: page.file.path,
 			imageUrl: await this.getFirstImageSrc(page),
 			filename: page.file.name,
-			path: page.file.path
+			path: page.file.path,
+			fields: []
 		}
 
 		if (this.config.fields) {
