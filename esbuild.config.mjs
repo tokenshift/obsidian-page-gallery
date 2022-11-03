@@ -1,5 +1,7 @@
 import esbuild from "esbuild";
 import process from "process";
+import esbuildSvelte from "esbuild-svelte";
+import sveltePreprocess from "svelte-preprocess";
 import builtins from 'builtin-modules'
 
 const banner =
@@ -17,6 +19,12 @@ esbuild.build({
 	},
 	entryPoints: ['./src/PageGalleryPlugin.ts'],
 	bundle: true,
+	plugins: [
+		esbuildSvelte({
+			compilerOptions: { css: true },
+			preprocess: sveltePreprocess()
+		})
+	],
 	external: [
 		'obsidian',
 		'electron',

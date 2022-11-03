@@ -1,8 +1,8 @@
-import { MarkdownPostProcessorContext, Notice, Plugin } from 'obsidian'
+import type { MarkdownPostProcessorContext } from 'obsidian'
+import { Notice, Plugin } from 'obsidian'
 import { DataviewApi, getAPI } from 'obsidian-dataview'
 
 import Config from './Config'
-import * as notices from './notices'
 import PageGalleryRenderChild from './PageGalleryRenderChild'
 
 export default class PageGalleryPlugin extends Plugin {
@@ -13,11 +13,23 @@ export default class PageGalleryPlugin extends Plugin {
 		if (api) {
 			this.api = api
 		} else {
-			new Notice(await notices.missingObsidianDataview())
+			this.showMissingDataviewNotice()
 			return
 		}
 
 		this.registerMarkdownCodeBlockProcessor('page-gallery', (source, el, ctx) => this.handlePageGalleryBlock(source, el, ctx))
+	}
+
+	showMissingDataviewNotice () {
+		const fragment = document.createDocumentFragment()
+		fragment.appendText('Failed to load the Dataview API! Is the ')
+		const a = document.createElement('a')
+		a.setAttribute('href', 'https://github.com/blacksmithgu/obsidian-dataview')
+		a.appendText('obsidian-dataview')
+		fragment.appendChild(a)
+		fragment.appendText(' plugin enabled?')
+
+		new Notice(fragment)
 	}
 
 	async handlePageGalleryBlock (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
@@ -25,7 +37,6 @@ export default class PageGalleryPlugin extends Plugin {
 			const config = Config.parse(source)
 			const child = new PageGalleryRenderChild(this, config, this.api, el)
 			ctx.addChild(child)
-			child.render()
 		} catch (err) {
 			const pre = document.createElement('pre')
 			pre.innerText = err.stack ? err.stack : err.message

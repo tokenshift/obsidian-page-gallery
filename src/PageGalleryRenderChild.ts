@@ -5,11 +5,12 @@ import path from 'path'
 import { ulid } from 'ulid'
 
 import { MarkdownPreviewView, MarkdownRenderChild, TFile } from 'obsidian';
-import { DataviewApi } from 'obsidian-dataview';
+import type { DataviewApi } from 'obsidian-dataview';
 
-import Config from './Config';
-import PageGalleryPlugin from './PageGalleryPlugin';
-import PageGalleryView, { PageGalleryTile } from './PageGalleryView';
+import type  Config from './Config';
+import type PageGalleryPlugin from './PageGalleryPlugin';
+
+import PageGallery from './views/PageGallery.svelte'
 
 const DEBOUNCE_RENDER_TIME = 500
 
@@ -19,13 +20,34 @@ const IMG_MIME_TYPES = [
 ]
 
 type Page = Record<string, any>
-type RenderFunc = () => Promise<void>
 
+export type TileConfig = {
+	height: string
+	width: string
+	position: string
+	repeat: string
+	size: string
+}
+
+export type TileInfo = {
+	href: string
+	imageUrl: string | null
+	filename: string
+	path: string
+	fields?: FieldInfo[]
+}
+
+export type FieldInfo = {
+	name: string
+	value: string
+	rendered: string
+}
 export default class PageGalleryRenderChild extends MarkdownRenderChild {
   id = ulid()
   plugin: PageGalleryPlugin
   config: Config
   api: DataviewApi
+	gallery: PageGallery
 
   constructor (plugin: PageGalleryPlugin, config: Config, api: DataviewApi, el: HTMLElement) {
     super(el)
@@ -35,64 +57,68 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     this.api = api
   }
 
-  onload () {
+	updateTiles = debounce(async () => {
+		const pages = await this.getMatchingPages()
+		this.gallery.$set({
+			tiles: await Promise.all(pages.map(p => this.getTileInfo(p)))
+		})
+	}, DEBOUNCE_RENDER_TIME)
+
+  async onload () {
+		this.gallery = new PageGallery({
+			target: this.containerEl,
+			props: {
+				api: this.api,
+				config: this.config.image,
+				container: this,
+				tiles: []
+			}
+		})
+
+		this.updateTiles()
+
 		this.registerEvent(this.plugin.app.metadataCache.on('dataview:metadata-change' as 'resolved', async () => {
-			await this.render()
+			await this.updateTiles()
 		}))
 
 		this.registerEvent(this.plugin.app.metadataCache.on('dataview:index-ready' as 'resolved', async () => {
-			await this.render()
+			await this.updateTiles()
 		}))
   }
 
-  clear () {
-    while (this.containerEl.firstChild) {
-      this.containerEl.removeChild(this.containerEl.firstChild)
-    }
-  }
-
-  render: RenderFunc = debounce(async () => {
-    const gallery = await this.getPageGallery(this.config)
-		const rendered = gallery.render()
-    this.clear()
-    this.containerEl.appendChild(rendered)
-
-  }, DEBOUNCE_RENDER_TIME)
-
-	async getPageGallery (config: Config): Promise<PageGalleryView> {
-		const pages = await this.getMatchingPages(config)
-		return new PageGalleryView({
-			config: config.image,
-			tiles: await Promise.all(pages.map(p => this.getPageGalleryTile(config, p)))
-		})
+	async getMatchingPages (): Promise<Array<Page>> {
+    const pages = Array.from(this.config.from
+			? this.api.pages(this.config.from)
+			: this.api.pages())
+    pages.sort(this.config.getSortFn())
+		return pages.slice(0, this.config.limit)
 	}
 
-	async getMatchingPages (config: Config): Promise<Array<Page>> {
-    const pages = Array.from(config.from ? this.api.pages(config.from) : this.api.pages())
-    pages.sort(config.getSortFn())
-		return pages.slice(0, config.limit)
-	}
-
-	async getPageGalleryTile (config: Config, page: Page): Promise<PageGalleryTile> {
-		return {
+	async getTileInfo (page: Page): Promise<TileInfo> {
+		const tile: TileInfo = {
 			href: page.file.path,
 			imageUrl: await this.getFirstImageSrc(page),
 			filename: page.file.name,
-			fields: config.fields?.map(f => ({
-				name: f,
-				value: objectPath.get(page, f)
-			}))
-				.filter(({ value }) => value)
-				.filter(({ value }) => !Array.isArray(value) || value.length > 0)
-				.map(field => {
-					return {
-						...field,
-						render: (container: HTMLElement) => {
-							this.api.renderValue(field.value, container, this, page.file.path, true)
-						}
-					}
-				})
+			path: page.file.path
 		}
+
+		if (this.config.fields) {
+			tile.fields = await Promise.all(
+				this.config.fields.map(f => ({
+					name: f,
+					value: objectPath.get(page, f)
+				}))
+				.filter(({ value }) => value)
+				.filter(({ value }) => !Array.isArray(value) || value.length)
+				.map(async f => ({
+					...f,
+					rendered: await this.renderFieldValue(tile, f.value)
+				})))
+		} else {
+			tile.fields = []
+		}
+
+		return tile
 	}
 
 	async getFirstImageSrc (page: Page): Promise<string | null> {
@@ -120,5 +146,11 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     }
 
     return null
+	}
+
+	async renderFieldValue (tile: TileInfo, fieldValue: string) {
+    const temp = document.createElement('div')
+    await this.api.renderValue(fieldValue, temp, this, tile.path, true)
+    return temp.innerHTML
 	}
 }
