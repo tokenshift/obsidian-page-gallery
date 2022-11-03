@@ -20,6 +20,8 @@ fields = ["file.name", "Description"]
 ```
 ![Example of the page-gallery plugin in use](./docs/example.png)
 
+*Photos from [Unsplash](https://unsplash.com/)*
+
 ## Settings
 
 Options in the `page-gallery` block are parsed using [TOML](https://toml.io/en/).
