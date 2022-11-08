@@ -1,7 +1,6 @@
 import debounce from 'debounce'
 import mime from 'mime-types'
 import objectPath from 'object-path'
-import path from 'path'
 import { ulid } from 'ulid'
 
 import { MarkdownPreviewView, MarkdownRenderChild, TFile } from 'obsidian';
@@ -181,7 +180,10 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
         return src
       }
 
-      const mimeType = mime.lookup(path.parse(src).ext)
+			const ext = src.split('.').pop()
+			if (!ext) { continue }
+
+      const mimeType = mime.lookup(ext)
       if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
 
       const file = this.plugin.app.vault.getFiles().find(f => f.path.endsWith(src))

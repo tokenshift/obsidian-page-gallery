@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.1] - 2022-11-08
+
+### Modified
+
+* Removed `path` dependency.
+
 ## [0.1.0] - 2022-11-03
 
 ### Added
