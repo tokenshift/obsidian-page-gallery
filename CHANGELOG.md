@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0] - 2022-11-09
+
+### Added
+
+* Mobile support! Tested in iPad (2019) and Android (Pixel 6) so far.
+
+### Modified
+
+* Reimplementing on top of [Quorafind/Obsidian-Svelte-Starter](https://github.com/Quorafind/Obsidian-Svelte-Starter)
+  to get it working on mobile devices.
+
 ## [0.1.1] - 2022-11-08
 
 ### Modified

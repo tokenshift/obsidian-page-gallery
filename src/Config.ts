@@ -1,4 +1,4 @@
-import merge from 'deepmerge'
+import merge from 'ts-deepmerge'
 import * as toml from 'toml'
 
 const DEFAULT_CONFIG = {

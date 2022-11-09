@@ -1,13 +1,14 @@
 import debounce from 'debounce'
-import mime from 'mime-types'
+import mime from 'mime'
 import objectPath from 'object-path'
 import { ulid } from 'ulid'
 
-import { MarkdownPreviewView, MarkdownRenderChild, TFile } from 'obsidian';
-import type { DataviewApi } from 'obsidian-dataview';
+import type { TFile } from 'obsidian'
+import { MarkdownPreviewView, MarkdownRenderChild } from 'obsidian'
+import type { DataviewApi } from 'obsidian-dataview'
 
-import type  Config from './Config';
-import type PageGalleryPlugin from './PageGalleryPlugin';
+import type  Config from './Config'
+import type PageGalleryPlugin from './PageGalleryPlugin'
 
 import PageGallery from './views/PageGallery.svelte'
 import { writable, type Writable } from 'svelte/store'
@@ -15,47 +16,47 @@ import { writable, type Writable } from 'svelte/store'
 const DEBOUNCE_RENDER_TIME = 500
 
 const IMG_MIME_TYPES = [
-	'image/jpeg',
-	'image/png'
+  'image/jpeg',
+  'image/png'
 ]
 
 type Page = Record<string, any>
 
 export type TileConfig = {
-	height: string
-	width: string
-	position: string
-	repeat: string
-	size: string
+  height: string
+  width: string
+  position: string
+  repeat: string
+  size: string
 }
 
 export type TileInfo = {
-	href: string
-	imageUrl: string | null
-	filename: string
-	path: string
-	fields: FieldInfo[]
+  href: string
+  imageUrl: string | null
+  filename: string
+  path: string
+  fields: FieldInfo[]
 }
 
 export type FieldInfo = {
-	name: string
-	value: string
-	rendered: string
+  name: string
+  value: string
+  rendered: string
 }
 
 export type FilterState = {
-	query: Writable<string>
-	parsed: string[]
+  query: Writable<string>
+  parsed: string[]
 }
 
 export default class PageGalleryRenderChild extends MarkdownRenderChild {
-  id = ulid()
+  id: string = ulid()
   plugin: PageGalleryPlugin
   config: Config
   api: DataviewApi
-	gallery: PageGallery
+  gallery: PageGallery
 
-	filter: FilterState
+  filter: FilterState
 
   constructor (plugin: PageGalleryPlugin, config: Config, api: DataviewApi, el: HTMLElement) {
     super(el)
@@ -64,139 +65,149 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     this.config = config
     this.api = api
 
-		this.filter = {
-			query: writable(''),
-			parsed: []
-		}
+    this.filter = {
+      query: writable(''),
+      parsed: []
+    }
   }
 
-	updateTiles = debounce(async () => {
-		const pages = await this.getMatchingPages()
-		this.gallery.$set({
-			tiles: await Promise.all(pages.map(p => this.getTileInfo(p)))
-		})
-	}, DEBOUNCE_RENDER_TIME)
+  updateTiles = debounce(async () => {
+    try {
+      const pages = await this.getMatchingPages()
+      const tiles = await Promise.all(pages.map(p => this.getTileInfo(p)))
+      this.gallery.$set({ tiles })
+    } catch (err) {
+      console.error(err)
+    }
+  }, DEBOUNCE_RENDER_TIME)
 
   async onload () {
-		const tiles: TileInfo[] = []
+    const tiles: TileInfo[] = []
 
-		this.gallery = new PageGallery({
-			target: this.containerEl,
-			props: {
-				config: this.config.image,
-				query: this.filter.query,
-				tiles
-			}
-		})
+    this.gallery = new PageGallery({
+      target: this.containerEl,
+      props: {
+        config: this.config.image,
+        query: this.filter.query,
+        tiles
+      }
+    })
 
-		this.filter.query.subscribe(q => {
-			this.filter.parsed = q.split(/\s+/).map(p => p.toLowerCase())
-			this.updateTiles()
-		})
+    this.filter.query.subscribe(q => {
+      this.filter.parsed = q.split(/\s+/).map(p => p.toLowerCase())
+      this.updateTiles()
+    })
 
-		this.updateTiles()
+    this.updateTiles()
 
-		this.registerEvent(this.plugin.app.metadataCache.on('dataview:metadata-change' as 'resolved', async () => {
-			await this.updateTiles()
-		}))
+    this.registerEvent(this.plugin.app.metadataCache.on('dataview:metadata-change' as 'resolved', async () => {
+      await this.updateTiles()
+    }))
 
-		this.registerEvent(this.plugin.app.metadataCache.on('dataview:index-ready' as 'resolved', async () => {
-			await this.updateTiles()
-		}))
+    this.registerEvent(this.plugin.app.metadataCache.on('dataview:index-ready' as 'resolved', async () => {
+      await this.updateTiles()
+    }))
   }
 
-	async getMatchingPages (): Promise<Array<Page>> {
+  async getMatchingPages (): Promise<Array<Page>> {
     const pages = Array.from(this.config.from
-			? this.api.pages(this.config.from)
-			: this.api.pages())
+      ? this.api.pages(this.config.from)
+      : this.api.pages())
     pages.sort(this.config.getSortFn())
-		const filtered = pages.filter(p => this.matchFilter(p))
-		return filtered.slice(0, this.config.limit)
-	}
+    const filtered = pages.filter(p => this.matchFilter(p))
+    return filtered.slice(0, this.config.limit)
+  }
 
-	matchFilter (page: Page) {
-		for (const pattern of this.filter.parsed) {
-			if (pattern.startsWith('#')) {
-				// Match tags
-				for (const tag of page.file.tags) {
-					if (tag.toLowerCase().startsWith(pattern)) {
-						return true
-					}
-				}
+  matchFilter (page: Page) {
+    for (const pattern of this.filter.parsed) {
+      if (pattern.startsWith('#')) {
+        // Match tags
+        for (const tag of page.file.tags) {
+          if (tag.toLowerCase().startsWith(pattern)) {
+            return true
+          }
+        }
 
-				return false
-			} else {
-				// Match path
-				if (!page.file.path.toLowerCase().contains(pattern)) {
-					return false
-				}
-			}
-		}
+        return false
+      } else {
+        // Match path
+        if (!page.file.path.toLowerCase().contains(pattern)) {
+          return false
+        }
+      }
+    }
 
-		return true
-	}
+    return true
+  }
 
-	async getTileInfo (page: Page): Promise<TileInfo> {
-		const tile: TileInfo = {
-			href: page.file.path,
-			imageUrl: await this.getFirstImageSrc(page),
-			filename: page.file.name,
-			path: page.file.path,
-			fields: []
-		}
+  async getTileInfo (page: Page): Promise<TileInfo> {
+    const tile: TileInfo = {
+      href: page.file.path,
+      imageUrl: await this.getFirstImageSrc(page),
+      filename: page.file.name,
+      path: page.file.path,
+      fields: []
+    }
 
-		if (this.config.fields) {
-			tile.fields = await Promise.all(
-				this.config.fields.map(f => ({
-					name: f,
-					value: objectPath.get(page, f)
-				}))
-				.filter(({ value }) => value)
-				.filter(({ value }) => !Array.isArray(value) || value.length)
-				.map(async f => ({
-					...f,
-					rendered: await this.renderFieldValue(tile, f.value)
-				})))
-		} else {
-			tile.fields = []
-		}
+    if (this.config.fields) {
+      tile.fields = await Promise.all(
+        this.config.fields.map(f => ({
+          name: f,
+          value: objectPath.get(page, f)
+        }))
+        .filter(({ value }) => value)
+        .filter(({ value }) => !Array.isArray(value) || value.length)
+        .map(async f => ({
+          ...f,
+          rendered: await this.renderFieldValue(tile, f.value)
+        })))
+    } else {
+      tile.fields = []
+    }
 
-		return tile
-	}
+    return tile
+  }
 
-	async getFirstImageSrc (page: Page): Promise<string | null> {
-		const file = this.plugin.app.vault.getAbstractFileByPath(page.file.path)
-		if (!file) { return null }
+  async getFirstImageSrc (page: Page): Promise<string | null> {
+    try {
+      const file = this.plugin.app.vault.getAbstractFileByPath(page.file.path)
+      if (!file) { return null }
 
-    const source = await this.plugin.app.vault.cachedRead(file as TFile)
-    const rendered = document.createElement('div')
-    MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this)
+      const source = await this.plugin.app.vault.cachedRead(file as TFile)
+      const rendered = document.createElement('div')
+      MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this)
 
-    for (const el of rendered.findAll('.internal-embed[src], img[src]')) {
-      const src = el.getAttribute('src')
-      if (!src) { continue }
+      for (const el of rendered.findAll('.internal-embed[src], img[src]')) {
+        const src = el.getAttribute('src')
+        if (!src) { continue }
 
-      if (el.tagName === 'IMG' && src.match(/^https?:\/\//)) {
-        return src
+        if (el.tagName === 'IMG' && src.match(/^https?:\/\//)) {
+          return src
+        }
+
+        const ext = src.split('.').pop()
+        if (!ext) { continue }
+
+        const mimeType = mime.getType(ext)
+        if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
+
+        const file = this.plugin.app.vault.getFiles().find(f => f.path.endsWith(src))
+        if (!file) { continue }
+        return this.plugin.app.vault.getResourcePath(file)
       }
 
-			const ext = src.split('.').pop()
-			if (!ext) { continue }
-
-      const mimeType = mime.lookup(ext)
-      if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
-
-      const file = this.plugin.app.vault.getFiles().find(f => f.path.endsWith(src))
-      if (!file) { continue }
-      return this.plugin.app.vault.getResourcePath(file)
+      return null
+    } catch (err) {
+      console.error(err)
+      return null
     }
 
     return null
-	}
+  }
 
-	async renderFieldValue (tile: TileInfo, fieldValue: string) {
+  async renderFieldValue (tile: TileInfo, fieldValue: string) {
     const temp = document.createElement('div')
     await this.api.renderValue(fieldValue, temp, this, tile.path, true)
     return temp.innerHTML
-	}
+  }
 }

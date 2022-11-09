@@ -1,6 +1,6 @@
 <script type="ts">
-	import type { Writable } from "svelte/store";
-	import { ulid } from "ulid";
+	import type { Writable } from 'svelte/store'
+	import { ulid } from 'ulid'
 
   const id = ulid()
 
