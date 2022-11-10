@@ -25,7 +25,6 @@ export default defineConfig(() => {
                 entry: path.resolve(__dirname, './src/PageGalleryPlugin.ts'),
                 formats: ['cjs'],
             },
-            css: {},
             rollupOptions: {
                 output: {
                     // Overwrite default Vite output fileName
