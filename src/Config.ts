@@ -4,15 +4,7 @@ import * as toml from 'toml'
 const DEFAULT_CONFIG = {
   fields: [],
   limit: 100,
-
-  image: {
-    height: '18em',
-    width: '12em',
-
-    position: 'center',
-    repeat: 'none',
-    size: 'cover'
-  }
+  image: {}
 }
 
 export type Page = Record<string, any>
@@ -23,11 +15,11 @@ export default class Config {
   limit?: number
 
   image: {
-    height: string
-    width: string
-    position: string
-    repeat: string
-    size: string
+    height?: string
+    width?: string
+    position?: string
+    repeat?: string
+    size?: string
   }
 
   constructor (attrs: object = {}) {

@@ -6,13 +6,7 @@
 	import PageGalleryFilter from './PageGalleryFilter.svelte'
 	import type { Writable } from 'svelte/store';
 
-  export let config: TileConfig = {
-    height: '18em',
-    width: '12em',
-    position: 'center',
-    repeat: 'none',
-    size: 'cover'
-  }
+  export let config: TileConfig
 
   export let query: Writable<string>
 
@@ -26,7 +20,10 @@
 
   <div
     class="page-gallery__tiles"
-    style="--imageWidth: {config.width}">
+    style:grid-template-columns={
+      config.width
+      ? `repeat(auto-fill, minmax(${config.width}, 1fr))`
+      : null }>
     {#each tiles as tile}
     <PageGalleryTile {tile} />
     {/each}
