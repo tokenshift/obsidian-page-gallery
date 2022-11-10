@@ -2,8 +2,7 @@ import mime from 'mime'
 import objectPath from 'object-path'
 import { ulid } from 'ulid'
 
-import type { debounce, TFile } from 'obsidian'
-import { MarkdownPreviewView, MarkdownRenderChild } from 'obsidian'
+import { debounce, MarkdownPreviewView, MarkdownRenderChild, TFile } from 'obsidian'
 import type { DataviewApi } from 'obsidian-dataview'
 
 import type  Config from './Config'
@@ -22,11 +21,11 @@ const IMG_MIME_TYPES = [
 type Page = Record<string, any>
 
 export type TileConfig = {
-  height: string
-  width: string
-  position: string
-  repeat: string
-  size: string
+  height?: string
+  width?: string
+  position?: string
+  repeat?: string
+  size?: string
 }
 
 export type TileInfo = {
@@ -170,7 +169,10 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
   async getFirstImageSrc (page: Page): Promise<string | null> {
     try {
       const file = this.plugin.app.vault.getAbstractFileByPath(page.file.path)
-      if (!file) { return null }
+
+      if (!(file instanceof TFile)) {
+        return null
+      }
 
       const source = await this.plugin.app.vault.cachedRead(file as TFile)
       const rendered = document.createElement('div')
