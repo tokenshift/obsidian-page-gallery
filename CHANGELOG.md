@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Modified
+
+* Moved styles out of svelte components and into styles.css to make them easier
+  to override.
+
 ## [0.2.0] - 2022-11-09
 
 ### Added

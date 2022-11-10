@@ -8,17 +8,6 @@
   let config = getContext<TileConfig>('config')
 </script>
 
-<style>
-  .page-gallery__image {
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-    display: block;
-  }
-
-  .page-gallery__image .hidden {
-    visibility: hidden;
-  }
-</style>
-
 <a class="page-gallery__image internal-link"
   data-href={tile.href}
   href={tile.href}

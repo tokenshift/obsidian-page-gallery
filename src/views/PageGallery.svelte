@@ -21,19 +21,6 @@
   setContext<TileConfig>('config', config)
 </script>
 
-<style>
-.page-gallery__tiles {
-  display: grid;
-  gap: 1em;
-  grid-auto-flow: row;
-  grid-template-columns: repeat(auto-fill, minmax(var(--imageWidth, 12em), 1fr));
-  list-style-type: none;
-  margin: 0;
-  overflow-x: auto;
-  padding: 0;
-}
-</style>
-
 <div class="page-gallery">
   <PageGalleryFilter {query} />
 
