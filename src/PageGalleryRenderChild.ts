@@ -1,9 +1,8 @@
-import debounce from 'debounce'
 import mime from 'mime'
 import objectPath from 'object-path'
 import { ulid } from 'ulid'
 
-import type { TFile } from 'obsidian'
+import type { debounce, TFile } from 'obsidian'
 import { MarkdownPreviewView, MarkdownRenderChild } from 'obsidian'
 import type { DataviewApi } from 'obsidian-dataview'
 
@@ -13,7 +12,7 @@ import type PageGalleryPlugin from './PageGalleryPlugin'
 import PageGallery from './views/PageGallery.svelte'
 import { writable, type Writable } from 'svelte/store'
 
-const DEBOUNCE_RENDER_TIME = 500
+const DEBOUNCE_RENDER_TIME = 100
 
 const IMG_MIME_TYPES = [
   'image/jpeg',
@@ -79,7 +78,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     } catch (err) {
       console.error(err)
     }
-  }, DEBOUNCE_RENDER_TIME)
+  }, DEBOUNCE_RENDER_TIME, true)
 
   async onload () {
     const tiles: TileInfo[] = []

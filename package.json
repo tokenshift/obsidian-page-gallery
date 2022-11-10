@@ -32,7 +32,6 @@
     "vite": "^3.0.0"
   },
   "dependencies": {
-    "debounce": "^1.2.1",
     "mime": "^3.0.0",
     "object-path": "^0.11.8",
     "toml": "^3.0.0",
