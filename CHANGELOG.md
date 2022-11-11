@@ -1,9 +1,11 @@
 # Changelog
 
-## [Unreleased]
+## [0.2.1] - 2022-11-10
 
 ### Modified
 
+* Using obsidian's built-in `debounce` instead of [debounce](https://www.npmjs.com/package/debounce).
+* Moved default image sizes to styles.css.
 * Moved styles out of svelte components and into styles.css to make them easier
   to override.
 
