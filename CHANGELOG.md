@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Modified
+
+* Cleaner (IMO) default styles, including calculating default column width from
+  container width, and flexibly breaking columns for smaller screens.
+* Block-specific image settings are now controlled by CSS vars on the root
+  `.page-gallery` element.
 ## [0.2.1] - 2022-11-10
 
 ### Modified
