@@ -149,7 +149,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
         .filter(({ value }) => !Array.isArray(value) || value.length)
         .map(async f => ({
           ...f,
-          rendered: await this.renderFieldValue(tile, f.value)
+          rendered: await this.renderFieldValue(tile, f)
         })))
     } else {
       tile.fields = []
@@ -194,13 +194,19 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
       console.error(err)
       return null
     }
-
-    return null
   }
 
-  async renderFieldValue (tile: TileInfo, fieldValue: string) {
+  async renderFieldValue (tile: TileInfo, field: FieldInfo) {
+    if (field.name === 'file.name') {
+      // Don't "render" filenames as markdown.
+      // TODO: There's probably a bunch of other file metadata that this
+      // should apply to. Either that, or "don't render" is the default,
+      // and there's a specific list of exceptions.
+      return field.value
+    }
+
     const temp = document.createElement('div')
-    await this.api.renderValue(fieldValue, temp, this, tile.path, true)
+    await this.api.renderValue(field.value, temp, this, tile.path, true)
     return temp.innerHTML
   }
 }

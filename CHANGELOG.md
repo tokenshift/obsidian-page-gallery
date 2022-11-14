@@ -8,6 +8,10 @@
   container width, and flexibly breaking columns for smaller screens.
 * Block-specific image settings are now controlled by CSS vars on the root
   `.page-gallery` element.
+* If the `file.name` is displayed via the `fields` setting, it will no longer
+  be rendered as markdown. This avoids issues when pages with names starting
+  with numbers were being treated as numbered lists.
+
 ## [0.2.1] - 2022-11-10
 
 ### Modified
