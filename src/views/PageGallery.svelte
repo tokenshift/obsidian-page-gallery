@@ -1,21 +1,25 @@
 <script lang="ts">
-	import { setContext } from 'svelte'
-
-	import type { TileConfig, TileInfo } from 'src/PageGalleryRenderChild'
-  import PageGalleryTile from "./PageGalleryTile.svelte"
-	import PageGalleryFilter from './PageGalleryFilter.svelte'
 	import type { Writable } from 'svelte/store';
 
-  export let config: TileConfig
+  import type { ImageConfig } from 'src/Config';
+
+	import type { TileInfo } from 'src/PageGalleryRenderChild'
+  import PageGalleryTile from "./PageGalleryTile.svelte"
+	import PageGalleryFilter from './PageGalleryFilter.svelte'
+
+  export let config: ImageConfig
 
   export let query: Writable<string>
 
   export let tiles: TileInfo[] = []
-
-  setContext<TileConfig>('config', config)
 </script>
 
-<div class="page-gallery">
+<div class="page-gallery"
+  style:--image-height={config.height || null}
+  style:--image-width={config.width || null}
+  style:--image-position={config.position || null}
+  style:--image-repeat={config.repeat || null}
+  style:--image-fit={config.fit || null}>
   <PageGalleryFilter {query} />
 
   <div class="page-gallery__tiles">

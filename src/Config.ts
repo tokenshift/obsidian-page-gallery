@@ -9,18 +9,20 @@ const DEFAULT_CONFIG = {
 
 export type Page = Record<string, any>
 
+export type ImageConfig = {
+  height?: string
+  width?: string
+  position?: string
+  repeat?: string
+  fit?: string
+}
+
 export default class Config {
   from?: string
   fields?: Array<string>
   limit?: number
 
-  image: {
-    height?: string
-    width?: string
-    position?: string
-    repeat?: string
-    size?: string
-  }
+  image: ImageConfig
 
   constructor (attrs: object = {}) {
     Object.assign(this, merge(DEFAULT_CONFIG, attrs))

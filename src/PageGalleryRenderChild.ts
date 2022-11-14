@@ -20,14 +20,6 @@ const IMG_MIME_TYPES = [
 
 type Page = Record<string, any>
 
-export type TileConfig = {
-  height?: string
-  width?: string
-  position?: string
-  repeat?: string
-  size?: string
-}
-
 export type TileInfo = {
   href: string
   imageUrl: string | null

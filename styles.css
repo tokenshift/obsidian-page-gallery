@@ -1,7 +1,7 @@
 .page-gallery {
-  /* width: 100%; */
-  /* margin: auto; */
-  --page-gallery-gutter-size: 16px;
+  --max-columns: 4;
+  --gutter-size: 16px;
+
   display: flex;
   flex-direction: column;
 }
@@ -24,31 +24,20 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--page-gallery-gutter-size);
+  gap: var(--gutter-size);
 }
 
 .page-gallery__tile {
-  /* border: 1px solid #ddd; */
-  /* border-radius: 15px; */
-  /* overflow: hidden; */
   max-width: 100%;
-  /* TODO: Override this based on block config. */
-  /* TODO: On desktop, the "content column" (--fill-line-width) is 700px. See if I can derive this default width value from the same variable, or else figure out what it should be on different device sizes. */
-  /* width: 163px; */
-  width: calc(
+  width: var(--image-width, calc(
     (var(--fill-line-width, 700px)
-    - 3 * var(--page-gallery-gutter-size))
-    / 4);
+    - (var(--max-columns) - 1) * var(--gutter-size))
+    / var(--max-columns)));
 }
-
-/* .page-gallery__fields {
-  border-radius: 15px;
-  margin-top: 0.2em;
-  padding: 0.1em 0.5em;
-} */
 
 .page-gallery__image {
   display: block;
+  height: var(--image-height);
   /* height: 12em; TODO: Set this based on block config. */
 }
 
@@ -60,9 +49,11 @@
   opacity: 0.75;
   width: 100%;
 
-  /* TODO: Override these based on block config. */
-  object-fit: cover;
-  object-position: center;
+  background-repeat: var(--image-repeat, no-repeat);
+  background-position: var(--image-position, center);
+  background-size: var(--image-fit, cover);
+  object-fit: var(--image-fit, cover);
+  object-position: var(--image-position, center);
 }
 
 .page-gallery__image:hover img {
@@ -78,7 +69,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 5em;
+  min-height: var(--image-height, 5em);
   text-align: center;
 }
 

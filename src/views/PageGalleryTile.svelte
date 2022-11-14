@@ -1,14 +1,10 @@
 <script type="ts">
-	import { getContext } from "svelte";
-
-	import type { TileConfig, TileInfo } from "src/PageGalleryRenderChild";
+	import type { TileInfo } from "src/PageGalleryRenderChild";
 	import PageGalleryField from "./PageGalleryField.svelte";
 	import PageGalleryTileFallback from "./PageGalleryTileFallback.svelte";
 	import PageGalleryTileImage from "./PageGalleryTileImage.svelte";
 
   export let tile: TileInfo
-
-  let config = getContext<TileConfig>('config')
 </script>
 
 <div class="page-gallery__tile">
