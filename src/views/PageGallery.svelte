@@ -18,12 +18,7 @@
 <div class="page-gallery">
   <PageGalleryFilter {query} />
 
-  <div
-    class="page-gallery__tiles"
-    style:grid-template-columns={
-      config.width
-      ? `repeat(auto-fill, minmax(${config.width}, 1fr))`
-      : null }>
+  <div class="page-gallery__tiles">
     {#each tiles as tile}
     <PageGalleryTile {tile} />
     {/each}

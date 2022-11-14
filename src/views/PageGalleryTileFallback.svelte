@@ -11,6 +11,4 @@
 <a class="page-gallery__fallback internal-link"
   data-href={tile.href}
   href={tile.href}
-  rel="noopener"
-  style:height={config.height}
-  style:width={config.width}>{tile.filename}</a>
+  rel="noopener">{tile.filename}</a>

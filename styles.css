@@ -1,60 +1,90 @@
+.page-gallery {
+  /* width: 100%; */
+  /* margin: auto; */
+  --page-gallery-gutter-size: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-gallery  * {
+  box-sizing: border-box;
+}
+
 .page-gallery__filter {
+  display: flex;
+  justify-content: center;
   margin-bottom: 0.5em;
 }
 
+.page-gallery__filter label {
+  margin: 0 0.25em;
+}
+
 .page-gallery__tiles {
-  display: grid;
-  gap: 1em;
-  grid-auto-flow: row;
-  grid-template-columns: repeat(auto-fill, minmax(12em, 1fr));
-  list-style-type: none;
-  margin: 0;
-  overflow-x: auto;
-  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--page-gallery-gutter-size);
 }
 
 .page-gallery__tile {
-  background: linear-gradient(to bottom right, rgba(100, 100, 100, 0.25), rgba(100, 100, 100, 0.5));
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-  display: block;
-  margin: 0;
-  opacity: 0.75;
-  overflow: hidden;
-  padding: 0;
-  text-decoration: none;
-  width: 12em;
+  /* border: 1px solid #ddd; */
+  /* border-radius: 15px; */
+  /* overflow: hidden; */
+  max-width: 100%;
+  /* TODO: Override this based on block config. */
+  /* TODO: On desktop, the "content column" (--fill-line-width) is 700px. See if I can derive this default width value from the same variable, or else figure out what it should be on different device sizes. */
+  /* width: 163px; */
+  width: calc(
+    (var(--fill-line-width, 700px)
+    - 3 * var(--page-gallery-gutter-size))
+    / 4);
 }
 
-.page-gallery__tile:hover {
-  background: linear-gradient(to bottom right, rgba(100, 100, 100, 0.5), rgba(100, 100, 100, 1));
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
-  opacity: 1;
-}
+/* .page-gallery__fields {
+  border-radius: 15px;
+  margin-top: 0.2em;
+  padding: 0.1em 0.5em;
+} */
 
 .page-gallery__image {
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   display: block;
-  height: 18em;
-  width: 12em;
+  /* height: 12em; TODO: Set this based on block config. */
 }
 
-.page-gallery__image .hidden {
-  visibility: hidden;
+.page-gallery__image img {
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+  display: block;
+  height: 100%;
+  opacity: 0.75;
+  width: 100%;
+
+  /* TODO: Override these based on block config. */
+  object-fit: cover;
+  object-position: center;
+}
+
+.page-gallery__image:hover img {
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
+  opacity: 1.0;
 }
 
 .page-gallery__fallback {
   align-content: center;
+  background: linear-gradient(to bottom right, rgba(100, 100, 100, 0.25), rgba(100, 100, 100, 0.5));
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
-  height: 18em;
   justify-content: center;
+  min-height: 5em;
   text-align: center;
-  width: 12em;
+}
+
+.page-gallery__fallback:hover {
+  background: linear-gradient(to bottom right, rgba(100, 100, 100, 0.5), rgba(100, 100, 100, 1));
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
 }
 
 .page-gallery__fields {

@@ -11,7 +11,7 @@
   let config = getContext<TileConfig>('config')
 </script>
 
-<div class="page-gallery__tile" style:width={config.width}>
+<div class="page-gallery__tile">
   {#if tile.imageUrl}
   <PageGalleryTileImage {tile} />
   {:else}
