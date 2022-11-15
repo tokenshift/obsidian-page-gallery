@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3] - 2022-11-14
+
+### Added
+
+* Added a `columns` config field to set the default (max) column count, as an
+  alternative to explicitly setting the image width.
+
 ## [0.2.2] - 2022-11-14
 
 ### Modified

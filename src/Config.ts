@@ -10,6 +10,7 @@ const DEFAULT_CONFIG = {
 export type Page = Record<string, any>
 
 export type ImageConfig = {
+  columns?: number
   height?: string
   width?: string
   position?: string

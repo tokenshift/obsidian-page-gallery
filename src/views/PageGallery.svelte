@@ -19,7 +19,8 @@
   style:--image-width={config.width || null}
   style:--image-position={config.position || null}
   style:--image-repeat={config.repeat || null}
-  style:--image-fit={config.fit || null}>
+  style:--image-fit={config.fit || null}
+  style:--max-columns={config.columns || null}>
   <PageGalleryFilter {query} />
 
   <div class="page-gallery__tiles">
