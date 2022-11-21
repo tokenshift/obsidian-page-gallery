@@ -15,8 +15,10 @@ to list pages and page metadata.
 Create a code block with type `page-gallery`:
 
 ```page-gallery
-from = '"Images" AND #gallery-image'
-fields = ["file.name", "Description"]
+from: '"Test Gallery"'
+orientation: landscape
+columns: 3
+fields: [file.name, Description]
 ```
 ![Example of the page-gallery plugin in use](./docs/example.png)
 
