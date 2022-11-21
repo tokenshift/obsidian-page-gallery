@@ -1,49 +1,69 @@
 import merge from 'ts-deepmerge'
-import * as toml from 'toml'
+import validate from 'validate.js'
 
-const DEFAULT_CONFIG = {
+import { parseYaml } from 'obsidian'
+
+import type { Page } from './PageGalleryRenderChild'
+import sortBy from './sortBy'
+
+export const DEFAULT_CONFIG = {
   fields: [],
-  limit: 100,
-  image: {}
+  limit: 100
 }
 
-export type Page = Record<string, any>
-
-export type ImageConfig = {
-  columns?: number
-  height?: string
-  width?: string
-  position?: string
-  repeat?: string
-  fit?: string
+export function defaultSort (a: Page, b: Page) {
+  return a.file.path.localeCompare(b.file.path)
 }
 
+export const SCHEMA = {
+  from: { presence: { allowEmpty: false}, type: 'string' },
+  fields: { type: 'array' },
+  limit: { type: 'number' },
+  groupBy: { type: 'array' },
+  sortBy: { type: 'array' },
+  height: { type: 'string' }
+}
 export default class Config {
-  from?: string
-  fields?: Array<string>
-  limit?: number
+  from: string
+  fields: string[] | null
+  limit: number
+  groupBy: string[] | null
+  sortBy: string[] | null
+  height: string |  null
 
-  image: ImageConfig
+  constructor (config: any) {
+    config = merge(DEFAULT_CONFIG, config)
 
-  constructor (attrs: object = {}) {
-    Object.assign(this, merge(DEFAULT_CONFIG, attrs))
-  }
-
-  static parse (source: string) {
-    try {
-      const parsed = toml.parse(source)
-      return new Config(parsed)
-    } catch (err) {
-      console.trace(err)
-      throw new Error('Invalid page-gallery config!')
+    for (const arrayField of ['fields', 'groupBy', 'sortBy']) {
+      if (config[arrayField] && !Array.isArray(config[arrayField])) {
+        config[arrayField] = [config[arrayField]]
+      }
     }
+
+    const errors = validate(config, SCHEMA)
+
+    if (errors) {
+      throw new Error(`Invalid config: ${errors}`)
+    }
+
+    this.from = config.from
+    this.fields = config.fields
+    this.limit = config.limit
+    this.groupBy = config.groupBy
+    this.sortBy = config.sortBy
+    this.height = config.height
   }
 
-  // TODO: Add sort options to config. Right now, it just sorts
-  // by filename.
+  static parse (source: string): Config {
+    const parsed = parseYaml(source)
+    return new Config(parsed)
+  }
+
   getSortFn () {
-    return (a: Page, b: Page) => {
-      return a.file.path.localeCompare(b.file.path)
+    if (Array.isArray(this.sortBy) && this.sortBy.length > 0) {
+      return sortBy(this.sortBy)
+    } else {
+      return defaultSort
     }
   }
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+* Added `sortBy` config option.
+
+### Modified
+
+* **BREAKING** Using YAML rather than TOML for config language.
+
 ## [0.2.3] - 2022-11-14
 
 ### Added

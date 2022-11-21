@@ -5,7 +5,7 @@ import { ulid } from 'ulid'
 import { debounce, MarkdownPreviewView, MarkdownRenderChild, TFile } from 'obsidian'
 import type { DataviewApi } from 'obsidian-dataview'
 
-import type  Config from './Config'
+import type Config from './Config'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 
 import PageGallery from './views/PageGallery.svelte'
@@ -18,7 +18,7 @@ const IMG_MIME_TYPES = [
   'image/png'
 ]
 
-type Page = Record<string, any>
+export type Page = Record<string, any>
 
 export type TileInfo = {
   href: string
@@ -77,7 +77,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     this.gallery = new PageGallery({
       target: this.containerEl,
       props: {
-        config: this.config.image,
+        config: this.config,
         query: this.filter.query,
         tiles
       }
@@ -145,7 +145,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
           name: f,
           value: objectPath.get(page, f)
         }))
-        .filter(({ value }) => value)
+        .filter(({ value }) => typeof value !== undefined)
         .filter(({ value }) => !Array.isArray(value) || value.length)
         .map(async f => ({
           ...f,
@@ -196,7 +196,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     }
   }
 
-  async renderFieldValue (tile: TileInfo, field: FieldInfo) {
+  async renderFieldValue (tile: TileInfo, field: { name: string, value: string}): Promise<string> {
     if (field.name === 'file.name') {
       // Don't "render" filenames as markdown.
       // TODO: There's probably a bunch of other file metadata that this
