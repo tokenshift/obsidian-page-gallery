@@ -134,7 +134,6 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
   }
 
   async getTileInfo (page: Page): Promise<TileInfo> {
-    console.log('HERE:', page)
     const tile: TileInfo = {
       href: page.file.path,
       imageUrl: await this.getFirstImageSrc(page),
