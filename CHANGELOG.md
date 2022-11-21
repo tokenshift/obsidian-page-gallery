@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.3] - 2022-11-21
+
+### Modified
+
+* Updated the example in the README.
+
+### Fixed
+
+* Removed stray debug code.
+
 ## [0.3.2] - 2022-11-21
 
 ### Added
