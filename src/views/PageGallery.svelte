@@ -6,6 +6,7 @@
 	import PageGalleryFilter from './PageGalleryFilter.svelte'
 
   import type Config from 'src/Config';
+    import { stringify } from 'querystring';
 
   export let config: Config
 
@@ -27,6 +28,10 @@
   style:--custom-image-size={config.size || null}
   style:--custom-image-position={config.position || null}
   style:--custom-image-repeat={config.repeat || null}>
+  {#if config.debug}
+  <pre class="page-gallery__debug">{JSON.stringify(config, null, 2)}</pre>
+  {/if}
+
   {#if config.filter}
   <PageGalleryFilter {query} />
   {/if}

@@ -8,6 +8,12 @@
   or "landscape" mode.
 * Added a `filter` (boolean) option to toggle the filter bar on/off.
 
+### Modified
+
+* The `from` clause can now use multiline YAML strings (`>` or `|`) to allow
+  better formatting of long "from" clauses (e.g. listing each source on a
+  separate line).
+
 ## [0.3.1] - 2022-11-20
 
 ### Fixed

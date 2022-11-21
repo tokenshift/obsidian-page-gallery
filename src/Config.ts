@@ -19,6 +19,7 @@ export function defaultSort (a: Page, b: Page) {
 }
 
 export const SCHEMA = {
+  debug: { type: 'boolean' },
   from: { presence: { allowEmpty: false}, type: 'string' },
   fields: { type: 'array' },
   limit: { type: 'number' },
@@ -35,6 +36,8 @@ export const SCHEMA = {
   repeat: { type: 'string' }
 }
 export default class Config {
+  debug: boolean
+
   from: string
   fields: string[] | null
   limit: number
@@ -67,7 +70,8 @@ export default class Config {
       throw new Error(`Invalid config: ${errors}`)
     }
 
-    this.from = config.from
+    this.debug = config.debug
+    this.from = config.from.trim().replace(/[\n\r]+/g, ' ')
     this.fields = config.fields
     this.limit = config.limit
     this.groupBy = config.groupBy
