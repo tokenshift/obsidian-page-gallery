@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.1] - 2022-11-20
+
+### Fixed
+
+* Restored the hover opacity toggle.
+
 ## [0.3.0] - 2022-11-20
 
 ### Added
