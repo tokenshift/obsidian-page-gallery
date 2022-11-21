@@ -27,7 +27,9 @@
   style:--custom-image-size={config.size || null}
   style:--custom-image-position={config.position || null}
   style:--custom-image-repeat={config.repeat || null}>
+  {#if config.filter}
   <PageGalleryFilter {query} />
+  {/if}
 
   <div class="page-gallery__tiles">
     {#each tiles as tile}

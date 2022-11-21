@@ -34,9 +34,21 @@ Options in the `page-gallery` block are parsed using YAML.
 |`filter`|`boolean`|true|Whether  or  not to show the filter bar.|
 |`columns`|`number`|4|Number of columns to display at full width.|
 |`gutterSize`|`string`|`16px`|Size of the gutter between images.|
-|`orientation`|`portrait|landscape`|`portrait`|Whether to display styles in portrait or landscape mode. This controls the default `width` (see below).|
+|`orientation`|`portrait`|`landscape`|`portrait`|Whether to display styles in portrait or landscape mode. This controls the default `width` (see below).|
 |`width`|`string`|Calculated from `columns` and `gutterSize`.|Display width of each image in the gallery. Overrides `columns`.|
 |`height`|`string`|Calculated from `imageWidth`.|Display height of each image in the gallery.|
 |`size`|`string`|`cover`|How the image should be scaled to fit within the gallery tile.|
 |`position`|`string`|`center`|Positioning of each image in the gallery. Try `top`, `center`, or `bottom` (etc) to change what parts of the images are visible.|
 |`repeat`|`string`|`no-repeat`|Whether to repeat (i.e. tile) the image in each gallery item.|
+
+Additionally, the `size`, `position`, and `repeat` values can be overridden on
+a specific page via YAML frontmatter:
+
+```yaml
+---
+pageGallery:
+  size: contain
+  position: left
+  repeat: repeat-x
+---
+```

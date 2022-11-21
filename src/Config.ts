@@ -8,7 +8,8 @@ import sortBy from './sortBy'
 
 export const DEFAULT_CONFIG = {
   fields: [],
-  limit: 100
+  limit: 100,
+  filter: true
 }
 
 export const GOLDEN_RATIO = 1.618
@@ -23,6 +24,7 @@ export const SCHEMA = {
   limit: { type: 'number' },
   groupBy: { type: 'array' },
   sortBy: { type: 'array' },
+  filter: { type: 'boolean' },
   columns: { type: 'number' },
   gutterSize: { type: 'string' },
   orientation: { type: 'string', inclusion: ['portrait', 'landscape'] },
@@ -38,6 +40,7 @@ export default class Config {
   limit: number
   groupBy: string[] | null
   sortBy: string[] | null
+  filter: boolean
 
   columns: number | null
   gutterSize: string | null
@@ -69,6 +72,7 @@ export default class Config {
     this.limit = config.limit
     this.groupBy = config.groupBy
     this.sortBy = config.sortBy
+    this.filter = config.filter
     this.height = config.height
     this.width = config.width
     this.columns = config.columns

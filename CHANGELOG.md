@@ -6,6 +6,7 @@
 
 * Added an `orientation` option to set the default aspect ratio to "portrait"
   or "landscape" mode.
+* Added a `filter` (boolean) option to toggle the filter bar on/off.
 
 ## [0.3.1] - 2022-11-20
 
