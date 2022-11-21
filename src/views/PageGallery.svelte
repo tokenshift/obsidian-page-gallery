@@ -1,26 +1,31 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
 
-  import type { ImageConfig } from 'src/Config';
-
 	import type { TileInfo } from 'src/PageGalleryRenderChild'
   import PageGalleryTile from "./PageGalleryTile.svelte"
 	import PageGalleryFilter from './PageGalleryFilter.svelte'
 
-  export let config: ImageConfig
+  import type Config from 'src/Config';
+
+  export let config: Config
 
   export let query: Writable<string>
 
   export let tiles: TileInfo[] = []
+
+  let clientWidth: number
 </script>
 
 <div class="page-gallery"
-  style:--image-height={config.height || null}
-  style:--image-width={config.width || null}
-  style:--image-position={config.position || null}
-  style:--image-repeat={config.repeat || null}
-  style:--image-fit={config.fit || null}
-  style:--max-columns={config.columns || null}>
+  bind:clientWidth={clientWidth}
+  style:--page-gallery-width={`${clientWidth}px`}
+  style:--custom-columns={config.columns || null}
+  style:--custom-gutter-size={config.gutterSize || null}
+  style:--custom-image-height={config.height || null}
+  style:--custom-image-width={config.width || null}
+  style:--custom-image-size={config.size || null}
+  style:--custom-image-position={config.position || null}
+  style:--custom-image-repeat={config.repeat || null}>
   <PageGalleryFilter {query} />
 
   <div class="page-gallery__tiles">

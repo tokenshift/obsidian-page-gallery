@@ -7,8 +7,7 @@
 <a class="page-gallery__image internal-link"
   data-href={tile.href}
   href={tile.href}
-  rel="noopener">
-  <img alt="Link to {tile.filename}"
-    src={tile.imageUrl}
-    style:background-image={`url('${tile.imageUrl}')`}>
+  rel="noopener"
+  style:background-image={`url('${tile.imageUrl}')`}>
+  <span class="page-gallery__hidden">Link to {tile.filename}</span>
 </a>

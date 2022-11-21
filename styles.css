@@ -1,6 +1,14 @@
 .page-gallery {
-  --max-columns: 4;
-  --gutter-size: 16px;
+  --columns: var(--custom-columns, 4);
+  --gutter-size: var(--custom-gutter-size, 16px);
+  --image-width: var(--custom-image-width, calc(
+    (var(--fill-line-width, 700px)
+    - (var(--columns) - 1) * var(--gutter-size))
+    / var(--columns)));
+  --image-height: var(--custom-image-height, calc(1.618 * var(--image-width)));
+  --image-size: var(--custom-image-size, cover);
+  --image-position: var(--custom-image-position, center);
+  --image-repeat: var(--custom-image-repeat, no-repeat);
 
   display: flex;
   flex-direction: column;
@@ -29,31 +37,29 @@
 
 .page-gallery__tile {
   max-width: 100%;
-  width: var(--image-width, calc(
-    (var(--fill-line-width, 700px)
-    - (var(--max-columns) - 1) * var(--gutter-size))
-    / var(--max-columns)));
+  width: var(--image-width);
 }
 
 .page-gallery__image {
+  background-repeat: var(--image-repeat, no-repeat);
+  background-position: var(--image-position, center);
+  background-size: var(--image-size, cover);
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
   display: block;
   height: var(--image-height);
-  /* height: 12em; TODO: Set this based on block config. */
+  overflow: hidden;
+}
+
+.page-gallery__hidden {
+  opacity: 0;
 }
 
 .page-gallery__image img {
-  border-radius: 10px;
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
   display: block;
   height: 100%;
   opacity: 0.75;
   width: 100%;
-
-  background-repeat: var(--image-repeat, no-repeat);
-  background-position: var(--image-position, center);
-  background-size: var(--image-fit, cover);
-  object-fit: var(--image-fit, cover);
-  object-position: var(--image-position, center);
 }
 
 .page-gallery__image:hover img {
@@ -69,7 +75,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: var(--image-height, 5em);
+  min-height: var(--image-height);
   text-align: center;
 }
 

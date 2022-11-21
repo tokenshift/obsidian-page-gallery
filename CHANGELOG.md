@@ -9,6 +9,7 @@
 ### Modified
 
 * **BREAKING** Using YAML rather than TOML for config language.
+* Reimplementing image config/sizing options.
 
 ## [0.2.3] - 2022-11-14
 

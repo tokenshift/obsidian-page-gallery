@@ -21,7 +21,13 @@ export const SCHEMA = {
   limit: { type: 'number' },
   groupBy: { type: 'array' },
   sortBy: { type: 'array' },
-  height: { type: 'string' }
+  height: { type: 'string' },
+  width: { type: 'string' },
+  columns: { type: 'number' },
+  gutterSize: { type: 'string' },
+  size: { type: 'string' },
+  position: { type: 'string' },
+  repeat: { type: 'string' }
 }
 export default class Config {
   from: string
@@ -29,7 +35,15 @@ export default class Config {
   limit: number
   groupBy: string[] | null
   sortBy: string[] | null
+
+  columns: number | null
+  gutterSize: string | null
   height: string |  null
+  width: string | null
+
+  size: string | null
+  position: string | null
+  repeat: string | null
 
   constructor (config: any) {
     config = merge(DEFAULT_CONFIG, config)
@@ -52,6 +66,12 @@ export default class Config {
     this.groupBy = config.groupBy
     this.sortBy = config.sortBy
     this.height = config.height
+    this.width = config.width
+    this.columns = config.columns
+    this.gutterSize = config.gutterSize
+    this.size = config.size
+    this.position = config.position
+    this.repeat = config.repeat
   }
 
   static parse (source: string): Config {
