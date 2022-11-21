@@ -5,6 +5,8 @@
 ### Added
 
 * Added `sortBy` config option.
+* Made certain image options (`size`, `position` and `repeat`) overridable on
+  individual pages via page metadata/frontmatter.
 
 ### Modified
 

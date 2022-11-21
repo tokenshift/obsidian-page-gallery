@@ -26,6 +26,9 @@ export type TileInfo = {
   filename: string
   path: string
   fields: FieldInfo[]
+  size: string | null
+  position: string |  null
+  repeat: string |  null
 }
 
 export type FieldInfo = {
@@ -131,12 +134,16 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
   }
 
   async getTileInfo (page: Page): Promise<TileInfo> {
+    console.log('HERE:', page)
     const tile: TileInfo = {
       href: page.file.path,
       imageUrl: await this.getFirstImageSrc(page),
       filename: page.file.name,
       path: page.file.path,
-      fields: []
+      fields: [],
+      size: objectPath.get(page, 'pageGallery.size'),
+      position: objectPath.get(page, 'pageGallery.position'),
+      repeat: objectPath.get(page, 'pageGallery.repeat')
     }
 
     if (this.config.fields) {

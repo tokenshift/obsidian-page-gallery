@@ -7,7 +7,10 @@
   export let tile: TileInfo
 </script>
 
-<div class="page-gallery__tile">
+<div class="page-gallery__tile"
+  style:--image-size={tile.size || null}
+  style:--image-position={tile.position || null}
+  style:--image-repeat={tile.repeat || null}>
   {#if tile.imageUrl}
   <PageGalleryTileImage {tile} />
   {:else}
