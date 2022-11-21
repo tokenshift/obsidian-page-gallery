@@ -1,11 +1,12 @@
 .page-gallery {
   --columns: var(--custom-columns, 4);
   --gutter-size: var(--custom-gutter-size, 16px);
+  --aspect-ratio: var(--custom-aspect-ratio, 1.618);
   --image-width: var(--custom-image-width, calc(
     (var(--fill-line-width, 700px)
     - (var(--columns) - 1) * var(--gutter-size))
     / var(--columns)));
-  --image-height: var(--custom-image-height, calc(1.618 * var(--image-width)));
+  --image-height: var(--custom-image-height, calc(var(--aspect-ratio) * var(--image-width)));
   --image-size: var(--custom-image-size, cover);
   --image-position: var(--custom-image-position, center);
   --image-repeat: var(--custom-image-repeat, no-repeat);

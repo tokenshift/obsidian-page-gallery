@@ -21,6 +21,7 @@
   style:--page-gallery-width={`${clientWidth}px`}
   style:--custom-columns={config.columns || null}
   style:--custom-gutter-size={config.gutterSize || null}
+  style:--custom-aspect-ratio={config.aspectRatio || null}
   style:--custom-image-height={config.height || null}
   style:--custom-image-width={config.width || null}
   style:--custom-image-size={config.size || null}

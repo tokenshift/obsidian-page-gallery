@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+* Added an `orientation` option to set the default aspect ratio to "portrait"
+  or "landscape" mode.
+
 ## [0.3.1] - 2022-11-20
 
 ### Fixed

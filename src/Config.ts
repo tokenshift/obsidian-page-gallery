@@ -11,6 +11,8 @@ export const DEFAULT_CONFIG = {
   limit: 100
 }
 
+export const GOLDEN_RATIO = 1.618
+
 export function defaultSort (a: Page, b: Page) {
   return a.file.path.localeCompare(b.file.path)
 }
@@ -21,10 +23,11 @@ export const SCHEMA = {
   limit: { type: 'number' },
   groupBy: { type: 'array' },
   sortBy: { type: 'array' },
-  height: { type: 'string' },
-  width: { type: 'string' },
   columns: { type: 'number' },
   gutterSize: { type: 'string' },
+  orientation: { type: 'string', inclusion: ['portrait', 'landscape'] },
+  height: { type: 'string' },
+  width: { type: 'string' },
   size: { type: 'string' },
   position: { type: 'string' },
   repeat: { type: 'string' }
@@ -38,6 +41,7 @@ export default class Config {
 
   columns: number | null
   gutterSize: string | null
+  orientation: string | null
   height: string |  null
   width: string | null
 
@@ -69,6 +73,7 @@ export default class Config {
     this.width = config.width
     this.columns = config.columns
     this.gutterSize = config.gutterSize
+    this.orientation = config.orientation
     this.size = config.size
     this.position = config.position
     this.repeat = config.repeat
@@ -77,6 +82,16 @@ export default class Config {
   static parse (source: string): Config {
     const parsed = parseYaml(source)
     return new Config(parsed)
+  }
+
+  get aspectRatio () {
+    if (!this.orientation || this.orientation === 'portrait') {
+      return GOLDEN_RATIO
+    } else if (this.orientation === 'landscape') {
+      return 1 / GOLDEN_RATIO
+    } else {
+      return null
+    }
   }
 
   getSortFn () {
