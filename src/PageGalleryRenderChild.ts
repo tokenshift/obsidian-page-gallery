@@ -150,21 +150,20 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
       fields: [],
     }
 
-    // TODO: Parallelize this
-    for (const name of this.config.fields) {
-      const result = this.api.evaluate(name, page)
-      if (!result.successful) { continue }
-
-      const value = (result as Success<any, string>).value
-
-      const html = await this.renderFieldValue({ name, value }, page.file.path)
-
-      tile.fields.push({
-        name,
-        value,
-        html
-      })
-    }
+    tile.fields = await Promise.all(this.config.fields.map(name => ({
+      name,
+      result: this.api.evaluate(name, page)
+    }))
+    .filter(({result}) => result.successful)
+    .map(({name, result}) => ({
+      name,
+      value: (result as Success<any, string>).value
+    }))
+    .map(async ({name, value}) => ({
+      name,
+      value,
+      html: await this.renderFieldValue({ name, value }, page.file.path)
+    })))
 
     return tile
   }

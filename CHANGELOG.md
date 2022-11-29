@@ -6,6 +6,11 @@
 
 * You can now use [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview)
   expressions as fields.
+* Reverse/descending sort order (e.g. `sortBy: -file.name`).
+
+### Fixed
+
+* Can now sort by nested fields (e.g. `file.name`).
 
 ## [0.3.3] - 2022-11-21
 
