@@ -108,7 +108,8 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     const pages = Array.from(this.config.from
       ? this.api.pages(this.config.from)
       : this.api.pages())
-    pages.sort(this.config.getSortFn())
+    const sortFn = this.config.getSortFn()
+    pages.sort(sortFn)
     const filtered = pages.filter(p => this.matchFilter(p))
     return filtered.slice(0, this.config.limit)
   }
@@ -149,6 +150,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
       fields: [],
     }
 
+    // TODO: Parallelize this
     for (const name of this.config.fields) {
       const result = this.api.evaluate(name, page)
       if (!result.successful) { continue }
