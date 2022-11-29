@@ -3,7 +3,7 @@ import objectPath from 'object-path'
 import { ulid } from 'ulid'
 
 import { debounce, MarkdownPreviewView, MarkdownRenderChild, TFile } from 'obsidian'
-import type { DataviewApi } from 'obsidian-dataview'
+import type { DataviewApi, Result, Success } from 'obsidian-dataview'
 
 import type Config from './Config'
 import type PageGalleryPlugin from './PageGalleryPlugin'
@@ -149,20 +149,19 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
       fields: [],
     }
 
-    if (this.config.fields) {
-      tile.fields = await Promise.all(
-        this.config.fields.map(f => ({
-          name: f,
-          value: objectPath.get(page, f)
-        }))
-        .filter(({ value }) => typeof value !== undefined)
-        .filter(({ value }) => !Array.isArray(value) || value.length)
-        .map(async f => ({
-          ...f,
-          html: await this.renderFieldValue(tile, f)
-        })))
-    } else {
-      tile.fields = []
+    for (const name of this.config.fields) {
+      const result = this.api.evaluate(name, page)
+      if (!result.successful) { continue }
+
+      const value = (result as Success<any, string>).value
+
+      const html = await this.renderFieldValue({ name, value }, page.file.path)
+
+      tile.fields.push({
+        name,
+        value,
+        html
+      })
     }
 
     return tile
@@ -206,7 +205,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     }
   }
 
-  async renderFieldValue (tile: Tile, field: { name: string, value: string}): Promise<string> {
+  async renderFieldValue (field: { name: string, value: string}, path: string): Promise<string> {
     if (field.name === 'file.name') {
       // Don't "render" filenames as markdown.
       // TODO: There's probably a bunch of other file metadata that this
@@ -216,7 +215,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     }
 
     const temp = document.createElement('div')
-    await this.api.renderValue(field.value, temp, this, tile.path, true)
+    await this.api.renderValue(field.value, temp, this, path, true)
     return temp.innerHTML
   }
 }

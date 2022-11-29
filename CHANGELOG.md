@@ -1,7 +1,11 @@
 # Changelog
 
 ## [Unreleased]
-### Modified
+
+### Added
+
+* You can now use [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview)
+  expressions as fields.
 
 ## [0.3.3] - 2022-11-21
 

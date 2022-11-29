@@ -39,7 +39,7 @@ export default class Config {
   debug: boolean
 
   from: string
-  fields: string[] | null
+  fields: string[]
   limit: number
   groupBy: string[] | null
   sortBy: string[] | null
