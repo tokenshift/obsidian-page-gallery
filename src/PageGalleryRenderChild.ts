@@ -20,26 +20,25 @@ const IMG_MIME_TYPES = [
 
 export type Page = Record<string, any>
 
-export type TileInfo = {
+export type Tile = {
   href: string
-  imageUrl: string | null
   filename: string
   path: string
-  fields: FieldInfo[]
-  size: string | null
-  position: string |  null
-  repeat: string |  null
+
+  image: {
+    src: string | null
+    size: string | null
+    position: string | null
+    repeat: string | null
+  }
+
+  fields: Field[]
 }
 
-export type FieldInfo = {
+export type Field = {
   name: string
   value: string
-  rendered: string
-}
-
-export type FilterState = {
-  query: Writable<string>
-  parsed: string[]
+  html: string
 }
 
 export default class PageGalleryRenderChild extends MarkdownRenderChild {
@@ -49,7 +48,10 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
   api: DataviewApi
   gallery: PageGallery
 
-  filter: FilterState
+  filter: {
+    raw: Writable<string>
+    parsed: string[]
+  }
 
   constructor (plugin: PageGalleryPlugin, config: Config, api: DataviewApi, el: HTMLElement) {
     super(el)
@@ -59,7 +61,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     this.api = api
 
     this.filter = {
-      query: writable(''),
+      raw: writable(''),
       parsed: []
     }
   }
@@ -75,18 +77,18 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
   }, DEBOUNCE_RENDER_TIME, true)
 
   async onload () {
-    const tiles: TileInfo[] = []
+    const tiles: Tile[] = []
 
     this.gallery = new PageGallery({
       target: this.containerEl,
       props: {
         config: this.config,
-        query: this.filter.query,
+        filter: this.filter.raw,
         tiles
       }
     })
 
-    this.filter.query.subscribe(q => {
+    this.filter.raw.subscribe(q => {
       this.filter.parsed = q.split(/\s+/).map(p => p.toLowerCase())
       this.updateTiles()
     })
@@ -133,16 +135,18 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     return true
   }
 
-  async getTileInfo (page: Page): Promise<TileInfo> {
-    const tile: TileInfo = {
+  async getTileInfo (page: Page): Promise<Tile> {
+    const tile: Tile = {
       href: page.file.path,
-      imageUrl: await this.getFirstImageSrc(page),
-      filename: page.file.name,
       path: page.file.path,
+      filename: page.file.name,
+      image: {
+        src: await this.getFirstImageSrc(page),
+        position: objectPath.get(page, 'pageGallery.position'),
+        repeat: objectPath.get(page, 'pageGallery.repeat'),
+        size: objectPath.get(page, 'pageGallery.size')
+      },
       fields: [],
-      size: objectPath.get(page, 'pageGallery.size'),
-      position: objectPath.get(page, 'pageGallery.position'),
-      repeat: objectPath.get(page, 'pageGallery.repeat')
     }
 
     if (this.config.fields) {
@@ -155,7 +159,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
         .filter(({ value }) => !Array.isArray(value) || value.length)
         .map(async f => ({
           ...f,
-          rendered: await this.renderFieldValue(tile, f)
+          html: await this.renderFieldValue(tile, f)
         })))
     } else {
       tile.fields = []
@@ -202,7 +206,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     }
   }
 
-  async renderFieldValue (tile: TileInfo, field: { name: string, value: string}): Promise<string> {
+  async renderFieldValue (tile: Tile, field: { name: string, value: string}): Promise<string> {
     if (field.name === 'file.name') {
       // Don't "render" filenames as markdown.
       // TODO: There's probably a bunch of other file metadata that this

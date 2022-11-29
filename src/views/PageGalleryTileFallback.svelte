@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { TileInfo } from "src/PageGalleryRenderChild";
+	import type { Tile } from "src/PageGalleryRenderChild";
 
-  export let tile: TileInfo
+  export let tile: Tile
 </script>
 
 <a class="page-gallery__fallback internal-link"

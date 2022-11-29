@@ -4,10 +4,10 @@
 
   const id = ulid()
 
-  export let query: Writable<string>
+  export let filter: Writable<string>
 </script>
 
 <div class="page-gallery__filter">
   <label for={id}>🔎</label>
-  <input id={id} type="text" bind:value={$query}>
+  <input id={id} type="text" bind:value={$filter}>
 </div>

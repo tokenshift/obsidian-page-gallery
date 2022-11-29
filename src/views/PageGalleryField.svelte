@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { FieldInfo } from "src/PageGalleryRenderChild";
+	import type { Field } from "src/PageGalleryRenderChild";
 
-  export let field: FieldInfo
+  export let field: Field
 </script>
 
 <div
   class="page-gallery__field"
   data-page-gallery-field-name={field.name}>
-  {@html field.rendered}
+  {@html field.html}
 </div>

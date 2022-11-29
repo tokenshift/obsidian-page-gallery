@@ -1,17 +1,17 @@
 <script type="ts">
-	import type { TileInfo } from "src/PageGalleryRenderChild";
+	import type { Tile } from "src/PageGalleryRenderChild";
 	import PageGalleryField from "./PageGalleryField.svelte";
 	import PageGalleryTileFallback from "./PageGalleryTileFallback.svelte";
 	import PageGalleryTileImage from "./PageGalleryTileImage.svelte";
 
-  export let tile: TileInfo
+  export let tile: Tile
 </script>
 
 <div class="page-gallery__tile"
-  style:--image-size={tile.size || null}
-  style:--image-position={tile.position || null}
-  style:--image-repeat={tile.repeat || null}>
-  {#if tile.imageUrl}
+  style:--image-size={tile.image.size || null}
+  style:--image-position={tile.image.position || null}
+  style:--image-repeat={tile.image.repeat || null}>
+  {#if tile.image.src}
   <PageGalleryTileImage {tile} />
   {:else}
   <PageGalleryTileFallback {tile} />

@@ -1,18 +1,15 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
 
-	import type { TileInfo } from 'src/PageGalleryRenderChild'
+	import type { Tile } from 'src/PageGalleryRenderChild'
   import PageGalleryTile from "./PageGalleryTile.svelte"
 	import PageGalleryFilter from './PageGalleryFilter.svelte'
 
   import type Config from 'src/Config';
-    import { stringify } from 'querystring';
 
   export let config: Config
-
-  export let query: Writable<string>
-
-  export let tiles: TileInfo[] = []
+  export let filter: Writable<string>
+  export let tiles: Tile[] = []
 
   let clientWidth: number
 </script>
@@ -33,7 +30,7 @@
   {/if}
 
   {#if config.filter}
-  <PageGalleryFilter {query} />
+  <PageGalleryFilter {filter} />
   {/if}
 
   <div class="page-gallery__tiles">
