@@ -3,7 +3,7 @@ import objectPath from 'object-path'
 import { ulid } from 'ulid'
 
 import { debounce, MarkdownPreviewView, MarkdownRenderChild, TFile } from 'obsidian'
-import type { DataviewApi, Result, Success } from 'obsidian-dataview'
+import type { DataviewApi, Success } from 'obsidian-dataview'
 
 import type Config from './Config'
 import type PageGalleryPlugin from './PageGalleryPlugin'
@@ -20,6 +20,11 @@ const IMG_MIME_TYPES = [
 
 export type Page = Record<string, any>
 
+export type TileGroup = {
+  name: string
+  tiles: Tile[]
+}
+
 export type Tile = {
   href: string
   filename: string
@@ -33,6 +38,8 @@ export type Tile = {
   }
 
   fields: Field[]
+
+  groupBy: string
 }
 
 export type Field = {
@@ -70,21 +77,32 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     try {
       const pages = await this.getMatchingPages()
       const tiles = await Promise.all(pages.map(p => this.getTileInfo(p)))
-      this.gallery.$set({ tiles })
+
+      // TODO: Figure out how sorting should work w/ grouping enabled (& a limit).
+      const groups: Record<string, TileGroup> = tiles.reduce((gs, tile) => {
+        if (gs.hasOwnProperty(tile.groupBy)) {
+          gs[tile.groupBy].tiles.push(tile)
+        } else {
+          gs[tile.groupBy] = { name: tile.groupBy, tiles: [tile] }
+        }
+
+        return gs
+      }, {} as Record<string, TileGroup>)
+      this.gallery.$set({ groups })
     } catch (err) {
       console.error(err)
     }
   }, DEBOUNCE_RENDER_TIME, true)
 
   async onload () {
-    const tiles: Tile[] = []
+    const groups: Record<string, TileGroup> = {}
 
     this.gallery = new PageGallery({
       target: this.containerEl,
       props: {
         config: this.config,
         filter: this.filter.raw,
-        tiles
+        groups
       }
     })
 
@@ -148,17 +166,26 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
         size: objectPath.get(page, 'pageGallery.size')
       },
       fields: [],
+      groupBy: ''
+    }
+
+    if (this.config.groupBy) {
+      const result = this.api.evaluate(this.config.groupBy, page)
+      if (result.successful) {
+        tile.groupBy = result.value
+      }
     }
 
     tile.fields = await Promise.all(this.config.fields.map(name => ({
       name,
       result: this.api.evaluate(name, page)
     }))
-    .filter(({result}) => result.successful)
-    .map(({name, result}) => ({
+    .filter(({ result }) => result.successful)
+    .map(({ name, result }) => ({
       name,
       value: (result as Success<any, string>).value
     }))
+    .filter(({ value }) => value)
     .map(async ({name, value}) => ({
       name,
       value,

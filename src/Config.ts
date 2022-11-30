@@ -9,7 +9,8 @@ import sortBy from './sortBy'
 export const DEFAULT_CONFIG = {
   fields: [],
   limit: 100,
-  filter: true
+  filter: true,
+  sortBy: []
 }
 
 export const GOLDEN_RATIO = 1.618
@@ -23,7 +24,7 @@ export const SCHEMA = {
   from: { presence: { allowEmpty: false}, type: 'string' },
   fields: { type: 'array' },
   limit: { type: 'number' },
-  groupBy: { type: 'array' },
+  groupBy: { type: 'string' },
   sortBy: { type: 'array' },
   filter: { type: 'boolean' },
   columns: { type: 'number' },
@@ -41,8 +42,8 @@ export default class Config {
   from: string
   fields: string[]
   limit: number
-  groupBy: string[] | null
-  sortBy: string[] | null
+  groupBy: string | null
+  sortBy: string[]
   filter: boolean
 
   columns: number | null
@@ -58,7 +59,7 @@ export default class Config {
   constructor (config: any) {
     config = merge(DEFAULT_CONFIG, config)
 
-    for (const arrayField of ['fields', 'groupBy', 'sortBy']) {
+    for (const arrayField of ['fields', 'sortBy']) {
       if (config[arrayField] && !Array.isArray(config[arrayField])) {
         config[arrayField] = [config[arrayField]]
       }

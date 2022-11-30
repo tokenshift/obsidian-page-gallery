@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
 
-	import type { Tile } from 'src/PageGalleryRenderChild'
+	import type { TileGroup } from 'src/PageGalleryRenderChild'
   import PageGalleryTile from "./PageGalleryTile.svelte"
 	import PageGalleryFilter from './PageGalleryFilter.svelte'
 
@@ -9,7 +9,7 @@
 
   export let config: Config
   export let filter: Writable<string>
-  export let tiles: Tile[] = []
+  export let groups: Record<string, TileGroup> = {}
 
   let clientWidth: number
 </script>
@@ -33,9 +33,19 @@
   <PageGalleryFilter {filter} />
   {/if}
 
-  <div class="page-gallery__tiles">
-    {#each tiles as tile}
-    <PageGalleryTile {tile} />
+  <div class="page-gallery__groups">
+    {#each Object.values(groups) as group}
+    <section class="page-gallery__group">
+      {#if group.name}
+      <header class="page-gallery__group-title">{group.name}</header>
+      {/if}
+
+      <div class="page-gallery__tiles">
+        {#each group.tiles as tile}
+        <PageGalleryTile {tile} />
+        {/each}
+      </div>
+    </section>
     {/each}
   </div>
 </div>
