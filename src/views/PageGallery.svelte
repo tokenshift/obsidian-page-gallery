@@ -1,15 +1,15 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
 
-	import type { TileGroup } from 'src/PageGalleryRenderChild'
   import PageGalleryTile from "./PageGalleryTile.svelte"
 	import PageGalleryFilter from './PageGalleryFilter.svelte'
+  import type { TileGroup } from 'src/TileWrangler';
 
   import type Config from 'src/Config';
 
   export let config: Config
   export let filter: Writable<string>
-  export let groups: Record<string, TileGroup> = {}
+  export let groups: TileGroup[] = []
 
   let clientWidth: number
 </script>
@@ -34,10 +34,12 @@
   {/if}
 
   <div class="page-gallery__groups">
-    {#each Object.values(groups) as group}
+    {#each groups as group}
     <section class="page-gallery__group">
       {#if group.name}
       <header class="page-gallery__group-title">{group.name}</header>
+      {:else if groups.length > 1}
+      <header class="page-gallery__group-title fallback">Other</header>
       {/if}
 
       <div class="page-gallery__tiles">

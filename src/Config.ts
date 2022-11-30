@@ -3,21 +3,14 @@ import validate from 'validate.js'
 
 import { parseYaml } from 'obsidian'
 
-import type { Page } from './PageGalleryRenderChild'
-import sortBy from './sortBy'
-
 export const DEFAULT_CONFIG = {
   fields: [],
   limit: 100,
   filter: true,
-  sortBy: []
+  sortBy: ['file.path']
 }
 
 export const GOLDEN_RATIO = 1.618
-
-export function defaultSort (a: Page, b: Page) {
-  return a.file.path.localeCompare(b.file.path)
-}
 
 export const SCHEMA = {
   debug: { type: 'boolean' },
@@ -100,14 +93,6 @@ export default class Config {
       return 1 / GOLDEN_RATIO
     } else {
       return null
-    }
-  }
-
-  getSortFn () {
-    if (Array.isArray(this.sortBy) && this.sortBy.length > 0) {
-      return sortBy(this.sortBy)
-    } else {
-      return defaultSort
     }
   }
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Tile } from 'src/PageGalleryRenderChild'
+	import type { Tile } from 'src/TileWrangler'
 
   export let tile: Tile
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { TileGroup } from "src/PageGalleryRenderChild";
+  import type { TileGroup } from 'src/TileWrangler'
 
   export let group: TileGroup
 </script>

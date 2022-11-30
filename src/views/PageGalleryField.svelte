@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Field } from "src/PageGalleryRenderChild";
+	import type { Field } from 'src/TileWrangler'
 
   export let field: Field
 </script>

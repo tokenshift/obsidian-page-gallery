@@ -1,8 +1,8 @@
 <script type="ts">
-	import type { Tile } from "src/PageGalleryRenderChild";
-	import PageGalleryField from "./PageGalleryField.svelte";
-	import PageGalleryTileFallback from "./PageGalleryTileFallback.svelte";
-	import PageGalleryTileImage from "./PageGalleryTileImage.svelte";
+	import PageGalleryField from './PageGalleryField.svelte'
+	import PageGalleryTileFallback from './PageGalleryTileFallback.svelte'
+	import PageGalleryTileImage from './PageGalleryTileImage.svelte'
+  import type { Tile } from 'src/TileWrangler'
 
   export let tile: Tile
 </script>

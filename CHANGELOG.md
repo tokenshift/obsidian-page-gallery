@@ -4,13 +4,19 @@
 
 ### Added
 
+* Implemented the `groupBy` config field.
+* Reverse/descending sort order (e.g. `sortBy: -file.name`).
 * You can now use [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview)
   expressions as fields.
-* Reverse/descending sort order (e.g. `sortBy: -file.name`).
+  * This also works in `sortBy` and `groupBy` settings.
 
 ### Fixed
 
 * Can now sort by nested fields (e.g. `file.name`).
+
+### Modified
+
+* Significant refactoring of pages-to-tiles logic in new `TileWrangler` class.
 
 ## [0.3.3] - 2022-11-21
 
