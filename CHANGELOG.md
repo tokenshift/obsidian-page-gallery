@@ -9,6 +9,8 @@
 * You can now use [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview)
   expressions as fields.
   * This also works in `sortBy` and `groupBy` settings.
+* Tile info is now cached in-memory and only updated when the associated page
+  has changed, dramatically speeding up updates to the page gallery.
 
 ### Fixed
 

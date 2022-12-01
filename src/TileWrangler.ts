@@ -4,6 +4,7 @@ import objectPath from 'object-path'
 import { Component, MarkdownPreviewView, TFile } from 'obsidian'
 import type { DataviewApi, Success } from "obsidian-dataview"
 
+import MemoryTileCache from './MemoryTileCache'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 
 export const IMG_MIME_TYPES = [
@@ -43,31 +44,30 @@ export type TileWranglerOptions = {
   plugin: PageGalleryPlugin
   component: Component
   api: DataviewApi
+  cache?: TileCache
 
   from: string | null
   limit: number
   fields: string[]
+
   groupBy: string | null
   sortBy: string[]
 }
+export interface TileCache {
+  fetch (page: Page, fallback: () => Promise<Tile>): Promise<Tile>
+}
 
-type Page = Record<string, any>
+export type Page = Record<string, any>
 
 type PageWithFieldValues = {
   page: Page,
   fields: Record<string, any>
 }
-
-// TODO: Add an in-memory tile cache so I don't need to keep re-processing
-// pages that haven't changed.
-// TODO: Figure out if there's a good way to add an on-disk cache so you don't
-// have to fully rebuild the in-memory cache every time the plugin is loaded.
-// Maybe make it optional/configurable, so that users don't have cache files
-// showing up in their workspace if they don't want.
 export default class TileWrangler {
   plugin: PageGalleryPlugin
   component: Component
   api: DataviewApi
+  cache: TileCache
 
   from: string | null
   limit: number
@@ -85,6 +85,7 @@ export default class TileWrangler {
     this.plugin = options.plugin
     this.component = options.component
     this.api = options.api
+    this.cache = options.cache || new MemoryTileCache()
     this.from = options.from || null
     this.limit = options.limit
     this.fields = options.fields
@@ -117,11 +118,11 @@ export default class TileWrangler {
     const pages = this.getFilteredPages()
 
     // Compute the `groupBy` and `sortBy` values for each page.
-    // TODO: Parallelize
-    const pagesWithMeta = pages.map(page => ({
-      page,
-      fields: this.getFieldValues(page)
-    }))
+    const pagesWithMeta = await Promise.all(
+      pages.map(async page => ({
+        page,
+        fields: this.getFieldValues(page)
+      })))
 
     // Sort the pages based on their `groupBy` and `sortBy` metadata.
     const sortFn = this.getSortFn()
@@ -131,7 +132,7 @@ export default class TileWrangler {
     const filtered = sorted.slice(0, this.limit)
 
     // Convert remaining pages into tiles.
-    const tiles = await Promise.all(filtered.map(p => this.getTileInfo(p)))
+    const tiles = await Promise.all(filtered.map(p => this.getCachedTileInfo(p)))
 
     // Group tiles into TileGroups and return.
     const groups: TileGroup[] = []
@@ -267,6 +268,10 @@ export default class TileWrangler {
       // Everything matched
       return 0
     }
+  }
+
+  getCachedTileInfo (page: PageWithFieldValues): Promise<Tile> {
+    return this.cache.fetch(page.page, () => this.getTileInfo(page))
   }
 
   async getTileInfo ({ page, fields }: PageWithFieldValues): Promise<Tile> {
