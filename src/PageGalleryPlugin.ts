@@ -7,10 +7,6 @@ import MemoryTileCache from './MemoryTileCache'
 import PageGalleryRenderChild from './PageGalleryRenderChild'
 import type { TileCache } from './TileWrangler'
 
-// TODO: Figure out if there's a good way to add an on-disk cache so you don't
-// have to fully rebuild the in-memory cache every time the plugin is loaded.
-// Maybe make it optional/configurable, so that users don't have cache files
-// showing up in their workspace if they don't want.
 export default class PageGalleryPlugin extends Plugin {
   api: DataviewApi
   cache: TileCache
