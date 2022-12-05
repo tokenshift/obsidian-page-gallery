@@ -3,13 +3,10 @@ import { Notice, Plugin } from 'obsidian'
 import { DataviewApi, getAPI } from 'obsidian-dataview'
 
 import Config from './Config'
-import MemoryTileCache from './MemoryTileCache'
 import PageGalleryRenderChild from './PageGalleryRenderChild'
-import type { TileCache } from './TileWrangler'
 
 export default class PageGalleryPlugin extends Plugin {
   api: DataviewApi
-  cache: TileCache
 
   async onload () {
     const api = getAPI()
@@ -19,8 +16,6 @@ export default class PageGalleryPlugin extends Plugin {
       this.showMissingDataviewNotice()
       return
     }
-
-    this.cache = new MemoryTileCache()
 
     this.registerMarkdownCodeBlockProcessor('page-gallery', (source, el, ctx) => this.handlePageGalleryBlock(source, el, ctx))
 
@@ -46,8 +41,7 @@ export default class PageGalleryPlugin extends Plugin {
         plugin: this,
         config,
         api: this.api,
-        element: el,
-        cache: this.cache
+        element: el
       })
       ctx.addChild(child)
     } catch (err) {

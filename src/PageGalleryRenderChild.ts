@@ -8,6 +8,7 @@ import type Config from './Config'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import PageGallery from './views/PageGallery.svelte'
 import TileWrangler, { type TileCache } from './TileWrangler'
+import MemoryTileCache from './MemoryTileCache'
 
 const DEBOUNCE_RENDER_TIME = 100
 
@@ -16,11 +17,11 @@ export type PageGalleryRenderChildOptions = {
   element: HTMLElement
   api: DataviewApi
   config: Config
-  cache?: TileCache
 }
 
 export default class PageGalleryRenderChild extends MarkdownRenderChild {
   id: string = ulid()
+  cache: TileCache
 
   plugin: PageGalleryPlugin
   config: Config
@@ -33,15 +34,16 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
       plugin,
       element,
       api,
-      config,
-      cache
+      config
     } = options
 
     super(element)
 
+    this.cache = new MemoryTileCache()
+
     this.wrangler = new TileWrangler({
       ...config,
-      cache,
+      cache: this.cache,
       plugin,
       component: this,
       api

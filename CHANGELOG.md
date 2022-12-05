@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5] - 2022-12-05
+
+### Fixed
+
+* Caching of tile info was causing changes to the page-gallery config (such
+  as modifications to the list of fields) not to be applied.
+
 ## [0.3.4] - 2022-12-01
 
 ### Added
