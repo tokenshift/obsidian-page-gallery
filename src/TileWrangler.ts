@@ -47,7 +47,7 @@ export type TileWranglerOptions = {
   cache?: TileCache
 
   from: string | null
-  limit: number
+  limit: number | null
   fields: string[]
 
   groupBy: string | null
@@ -70,7 +70,7 @@ export default class TileWrangler {
   cache: TileCache
 
   from: string | null
-  limit: number
+  limit: number | null
   fields: string[]
   groupBy: string | null
 
@@ -129,7 +129,7 @@ export default class TileWrangler {
     const sorted: PageWithFieldValues[] = Array.from(pagesWithMeta).sort(sortFn)
 
     // Truncate the list based on `limit`.
-    const filtered = sorted.slice(0, this.limit)
+    const filtered = this.limit == null ? sorted : sorted.slice(0, this.limit)
 
     // Convert remaining pages into tiles.
     const tiles = await Promise.all(filtered.map(p => this.getCachedTileInfo(p)))

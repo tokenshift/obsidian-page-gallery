@@ -34,7 +34,7 @@ export default class Config {
 
   from: string
   fields: string[]
-  limit: number
+  limit: number | null
   groupBy: string | null
   sortBy: string[]
   filter: boolean
