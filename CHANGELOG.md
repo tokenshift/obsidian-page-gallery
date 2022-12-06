@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.6] - 2022-12-05
+
+### Added
+
+* Support for more image file types. Image types now supported:
+  * JPG
+  * PNG
+  * GIF
+  * BMP
+  * WEBP
+
+### Fixed
+
+* Corrected the default `limit` (100) in the README and allowed it to be set to
+  `null` to display all matched pages.
+
 ## [0.3.5] - 2022-12-05
 
 ### Fixed
