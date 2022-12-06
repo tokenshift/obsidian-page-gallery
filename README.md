@@ -32,7 +32,7 @@ Options in the `page-gallery` block are parsed using YAML.
 |--------|------|---------|-------------|
 |`from`|`string`|-|Query for pages to include in the gallery. Uses the same query syntax as [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview).|
 |`fields`|`Array<string>`|[]|List of fields to display in the gallery, under the image. Supports both [frontmatter and inline fields](https://blacksmithgu.github.io/obsidian-dataview/data-annotation/).|
-|`limit`|`number`|null|Limit on the number of pages that will be displayed in the gallery. Leave this blank to display all of the pages matched by the `from` query.|
+|`limit`|`number`|100|Limit on the number of pages that will be displayed in the gallery. Set this to `null` to display all of the pages matched by the `from` query.|
 |`filter`|`boolean`|true|Whether  or  not to show the filter bar.|
 |`columns`|`number`|4|Number of columns to display at full width.|
 |`gutterSize`|`string`|`16px`|Size of the gutter between images.|
