@@ -9,7 +9,10 @@ import type PageGalleryPlugin from './PageGalleryPlugin'
 
 export const IMG_MIME_TYPES = [
   'image/jpeg',
-  'image/png'
+  'image/png',
+  'image/gif',
+  'image/bmp',
+  'image/webp'
 ]
 
 export type TileGroup = {
