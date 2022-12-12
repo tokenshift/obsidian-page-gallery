@@ -327,6 +327,10 @@ export default class TileWrangler {
 
       const source = await this.plugin.app.vault.cachedRead(file as TFile)
       const rendered = document.createElement('div')
+      // The .render-bypass class is included so that we can detect elsewhere
+      // if we're inside another page gallery render call, to short-circuit
+      // recursive rendering.
+      rendered.classList.add('render-bypass')
       MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this.component)
 
       for (const el of rendered.findAll('.internal-embed[src], img[src]')) {

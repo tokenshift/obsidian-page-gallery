@@ -7,6 +7,8 @@
 * When the `sortBy` option was set to an array rather than a single value, the
   default "file.path" value was being prepended to whatever the user supplied,
   overriding the user-specified option(s).
+* Creating a page gallery that included the containing page itself was causing
+  an infinite loop of re-rendering.
 
 ## [0.3.6] - 2022-12-05
 

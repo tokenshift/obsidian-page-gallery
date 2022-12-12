@@ -36,6 +36,12 @@ export default class PageGalleryPlugin extends Plugin {
 
   async handlePageGalleryBlock (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
     try {
+      if (ctx.containerEl && ctx.containerEl.hasClass('render-bypass')) {
+        // Don't render page-gallery blocks recursively, if this is being called
+        // from within a `TileWrangler.renderValue` call.
+        return
+      }
+
       const config = Config.parse(source)
       const child = new PageGalleryRenderChild({
         plugin: this,
