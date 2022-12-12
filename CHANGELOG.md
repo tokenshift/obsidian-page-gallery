@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+* When the `sortBy` option was set to an array rather than a single value, the
+  default "file.path" value was being prepended to whatever the user supplied,
+  overriding the user-specified option(s).
+
 ## [0.3.6] - 2022-12-05
 
 ### Added

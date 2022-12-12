@@ -50,7 +50,9 @@ export default class Config {
   repeat: string | null
 
   constructor (config: any) {
-    config = merge(DEFAULT_CONFIG, config)
+    config = merge.withOptions({
+      mergeArrays: false
+    }, DEFAULT_CONFIG, config)
 
     for (const arrayField of ['fields', 'sortBy']) {
       if (config[arrayField] && !Array.isArray(config[arrayField])) {
