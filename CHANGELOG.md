@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+* Added a "clear" (❌) button to the filter/query bar.
+
 ## [0.3.7] - 2022-12-12
 
 ### Fixed
