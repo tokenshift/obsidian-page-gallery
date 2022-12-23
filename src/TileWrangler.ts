@@ -2,7 +2,7 @@ import mime from 'mime'
 import objectPath from 'object-path'
 
 import { Component, MarkdownPreviewView, TFile } from 'obsidian'
-import type { DataviewApi, Success } from "obsidian-dataview"
+import { Link, type DataviewApi, type Success } from "obsidian-dataview"
 
 import MemoryTileCache from './MemoryTileCache'
 import type PageGalleryPlugin from './PageGalleryPlugin'
@@ -17,6 +17,7 @@ export const IMG_MIME_TYPES = [
 
 export type TileGroup = {
   name: string | null
+  href?: string
   tiles: Tile[]
 }
 
@@ -292,6 +293,11 @@ export default class TileWrangler {
         size: objectPath.get(page, 'pageGallery.size')
       },
       fields: []
+    }
+
+    // Render the group name, if there is one
+    if (this.groupBy && tile.group) {
+      tile.group = await this.renderFieldValue({ name: this.groupBy, value: tile.group }, page.file.path)
     }
 
     // Fetch/evaluate all remaining field values

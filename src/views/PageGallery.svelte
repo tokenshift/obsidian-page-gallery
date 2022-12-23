@@ -37,7 +37,7 @@
     {#each groups as group}
     <section class="page-gallery__group">
       {#if group.name}
-      <header class="page-gallery__group-title">{group.name}</header>
+      <header class="page-gallery__group-title">{@html group.name}</header>
       {:else if groups.length > 1}
       <header class="page-gallery__group-title fallback">Other</header>
       {/if}

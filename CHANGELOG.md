@@ -6,6 +6,14 @@
 
 * Added a "clear" (❌) button to the filter/query bar.
 
+### Modified
+
+* If the `groupBy` field is a link, it will now be rendered as such.
+
+### Fixed
+
+* Links in the `groupBy` field were causing pages to not be grouped properly.
+
 ## [0.3.7] - 2022-12-12
 
 ### Fixed
