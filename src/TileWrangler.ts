@@ -2,7 +2,7 @@ import mime from 'mime'
 import objectPath from 'object-path'
 
 import { Component, MarkdownPreviewView, TFile } from 'obsidian'
-import { Link, type DataviewApi, type Success } from "obsidian-dataview"
+import { type DataviewApi, type Success } from "obsidian-dataview"
 
 import MemoryTileCache from './MemoryTileCache'
 import type PageGalleryPlugin from './PageGalleryPlugin'
