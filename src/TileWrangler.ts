@@ -4,6 +4,7 @@ import objectPath from 'object-path'
 import { Component, MarkdownPreviewView, TFile } from 'obsidian'
 import type { DataviewApi } from "obsidian-dataview"
 
+import MemoryTileCache from './MemoryTileCache'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 
 export const IMG_MIME_TYPES = [
@@ -48,6 +49,7 @@ export type TileWranglerOptions = {
   plugin: PageGalleryPlugin
   component: Component
   api: DataviewApi
+  cache?: TileCache
 
   from: string | null
   where: string | null
@@ -56,6 +58,10 @@ export type TileWranglerOptions = {
 
   groupBy: string | null
   sortBy: string[]
+}
+
+export interface TileCache {
+  fetch (page: Page, fallback: () => Promise<Tile>): Promise<Tile>
 }
 
 export type Page = Record<string, any>
@@ -69,6 +75,7 @@ export default class TileWrangler {
   plugin: PageGalleryPlugin
   component: Component
   api: DataviewApi
+  cache: TileCache
 
   from: string | null
   where: string | null
@@ -88,6 +95,7 @@ export default class TileWrangler {
     this.plugin = options.plugin
     this.component = options.component
     this.api = options.api
+    this.cache = options.cache || new MemoryTileCache()
     this.from = options.from || null
     this.where = options.where || null
     this.limit = options.limit
@@ -135,7 +143,7 @@ export default class TileWrangler {
     const filtered = this.limit == null ? sorted : sorted.slice(0, this.limit)
 
     // Convert remaining pages into tiles.
-    const tiles = await Promise.all(filtered.map(p => this.getTileInfo(p)))
+    const tiles = await Promise.all(filtered.map(p => this.getCachedTileInfo(p)))
 
     // Group tiles into TileGroups and return.
     const groups: TileGroup[] = []
@@ -281,6 +289,10 @@ export default class TileWrangler {
       // Everything matched
       return 0
     }
+  }
+
+  getCachedTileInfo (page: PageWithFieldValues): Promise<Tile> {
+    return this.cache.fetch(page.page, () => this.getTileInfo(page))
   }
 
   async getTileInfo ({ page, fields }: PageWithFieldValues): Promise<Tile> {
