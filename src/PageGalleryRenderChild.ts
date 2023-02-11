@@ -7,12 +7,12 @@ import { writable } from 'svelte/store'
 import type Config from './Config'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import PageGallery from './views/PageGallery.svelte'
-import TileWrangler, { type TileCache } from './TileWrangler'
-import MemoryTileCache from './MemoryTileCache'
+import TileWrangler, { type Page } from './TileWrangler'
 
 const DEBOUNCE_RENDER_TIME = 100
 
 export type PageGalleryRenderChildOptions = {
+  sourcePath: string
   plugin: PageGalleryPlugin
   element: HTMLElement
   api: DataviewApi
@@ -21,8 +21,8 @@ export type PageGalleryRenderChildOptions = {
 
 export default class PageGalleryRenderChild extends MarkdownRenderChild {
   id: string = ulid()
-  cache: TileCache
 
+  sourcePath: string
   plugin: PageGalleryPlugin
   config: Config
   gallery: PageGallery
@@ -31,6 +31,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
 
   constructor (options: PageGalleryRenderChildOptions) {
     const {
+      sourcePath,
       plugin,
       element,
       api,
@@ -39,18 +40,20 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
 
     super(element)
 
-    this.cache = new MemoryTileCache()
+    this.plugin = plugin
+    this.config = config
+    this.sourcePath = sourcePath
+
+    const parentPage = api.page(this.sourcePath)
+
 
     this.wrangler = new TileWrangler({
       ...config,
-      cache: this.cache,
+      parentPage: parentPage as Page,
       plugin,
       component: this,
       api
     })
-
-    this.plugin = options.plugin
-    this.config = options.config
   }
 
   updateTiles = debounce(async () => {

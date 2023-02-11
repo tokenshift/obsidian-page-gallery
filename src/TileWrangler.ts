@@ -2,9 +2,8 @@ import mime from 'mime'
 import objectPath from 'object-path'
 
 import { Component, MarkdownPreviewView, TFile } from 'obsidian'
-import { type DataviewApi, type Success } from "obsidian-dataview"
+import type { DataviewApi, Success } from "obsidian-dataview"
 
-import MemoryTileCache from './MemoryTileCache'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 
 export const IMG_MIME_TYPES = [
@@ -45,10 +44,10 @@ export type Field = {
 }
 
 export type TileWranglerOptions = {
+  parentPage: Page
   plugin: PageGalleryPlugin
   component: Component
   api: DataviewApi
-  cache?: TileCache
 
   from: string | null
   limit: number | null
@@ -56,9 +55,6 @@ export type TileWranglerOptions = {
 
   groupBy: string | null
   sortBy: string[]
-}
-export interface TileCache {
-  fetch (page: Page, fallback: () => Promise<Tile>): Promise<Tile>
 }
 
 export type Page = Record<string, any>
@@ -68,10 +64,10 @@ type PageWithFieldValues = {
   fields: Record<string, any>
 }
 export default class TileWrangler {
+  parentPage: Page
   plugin: PageGalleryPlugin
   component: Component
   api: DataviewApi
-  cache: TileCache
 
   from: string | null
   limit: number | null
@@ -86,10 +82,10 @@ export default class TileWrangler {
   _sortBy: { field: string, reverse: boolean }[]
 
   constructor (options: TileWranglerOptions) {
+    this.parentPage = options.parentPage
     this.plugin = options.plugin
     this.component = options.component
     this.api = options.api
-    this.cache = options.cache || new MemoryTileCache()
     this.from = options.from || null
     this.limit = options.limit
     this.fields = options.fields
@@ -117,8 +113,8 @@ export default class TileWrangler {
   }
 
   async getTileGroups (): Promise<TileGroup[]> {
-    // Get all pages matching the `from` query,
-    // filtered path and/or tags.
+    // Get all pages matching the `from` query and `where` clause,
+    // filtered by path and/or tags.
     const pages = this.getFilteredPages()
 
     // Compute the `groupBy` and `sortBy` values for each page.
@@ -227,7 +223,11 @@ export default class TileWrangler {
   }
 
   evaluate<TResult> (field: string, page: Page): TResult | null {
-    const result = this.api.evaluate(field, page)
+    const result = this.api.evaluate(field, {
+      this: this.parentPage,
+      ...page
+    })
+    // console.log('Field:', field, 'Page:', page.file.path, 'Context:', this.context.file.path, 'Value:', result)
     return result.successful
       ? result.value as TResult
       : null
@@ -275,7 +275,7 @@ export default class TileWrangler {
   }
 
   getCachedTileInfo (page: PageWithFieldValues): Promise<Tile> {
-    return this.cache.fetch(page.page, () => this.getTileInfo(page))
+    return this.getTileInfo(page)
   }
 
   async getTileInfo ({ page, fields }: PageWithFieldValues): Promise<Tile> {
@@ -303,6 +303,9 @@ export default class TileWrangler {
     // Fetch/evaluate all remaining field values
     fields = this.getFieldValues(page, fields, true)
 
+    // TODO: This is not using the above `fields`, or going through this.evaluate,
+    // which handles the current page context. Whhy not? Do I need to replace
+    // this.fields.map w/ fields.map, and drop the 'successful' check here?
     tile.fields = await Promise.all(
       this.fields.map(name => ({
         name,
