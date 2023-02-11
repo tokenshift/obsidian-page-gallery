@@ -2,7 +2,7 @@ import mime from 'mime'
 import objectPath from 'object-path'
 
 import { Component, MarkdownPreviewView, TFile } from 'obsidian'
-import { type DataviewApi, type Success } from "obsidian-dataview"
+import type { DataviewApi } from "obsidian-dataview"
 
 import MemoryTileCache from './MemoryTileCache'
 import type PageGalleryPlugin from './PageGalleryPlugin'
@@ -39,24 +39,27 @@ export type Tile = {
 }
 
 export type Field = {
-  name: string
+  expression: string
   value: string
   html: string
 }
 
 export type TileWranglerOptions = {
+  parentPage: Page
   plugin: PageGalleryPlugin
   component: Component
   api: DataviewApi
   cache?: TileCache
 
   from: string | null
+  where: string | null
   limit: number | null
   fields: string[]
 
   groupBy: string | null
   sortBy: string[]
 }
+
 export interface TileCache {
   fetch (page: Page, fallback: () => Promise<Tile>): Promise<Tile>
 }
@@ -68,12 +71,14 @@ type PageWithFieldValues = {
   fields: Record<string, any>
 }
 export default class TileWrangler {
+  parentPage: Page
   plugin: PageGalleryPlugin
   component: Component
   api: DataviewApi
   cache: TileCache
 
   from: string | null
+  where: string | null
   limit: number | null
   fields: string[]
   groupBy: string | null
@@ -86,11 +91,13 @@ export default class TileWrangler {
   _sortBy: { field: string, reverse: boolean }[]
 
   constructor (options: TileWranglerOptions) {
+    this.parentPage = options.parentPage
     this.plugin = options.plugin
     this.component = options.component
     this.api = options.api
     this.cache = options.cache || new MemoryTileCache()
     this.from = options.from || null
+    this.where = options.where || null
     this.limit = options.limit
     this.fields = options.fields
     this.groupBy = options.groupBy || null
@@ -117,8 +124,8 @@ export default class TileWrangler {
   }
 
   async getTileGroups (): Promise<TileGroup[]> {
-    // Get all pages matching the `from` query,
-    // filtered path and/or tags.
+    // Get all pages matching the `from` query and `where` clause,
+    // filtered by path and/or tags.
     const pages = this.getFilteredPages()
 
     // Compute the `groupBy` and `sortBy` values for each page.
@@ -160,13 +167,19 @@ export default class TileWrangler {
    * Get all pages matching the `from` query.
    */
   getPages () {
-    return this.from
+    const pages = this.from
       ? this.api.pages(this.from)
       : this.api.pages()
+
+    if (this.where) {
+      return pages.filter(p => this.evaluate(this.where as string, p) == true)
+    } else {
+      return pages
+    }
   }
 
   /**
-   * Get all pages matching the `from` query, filtered by the
+   * Get all pages matching the `from` and `where` options, filtered by the
    * current filter query.
    */
   getFilteredPages () {
@@ -227,7 +240,11 @@ export default class TileWrangler {
   }
 
   evaluate<TResult> (field: string, page: Page): TResult | null {
-    const result = this.api.evaluate(field, page)
+    const result = this.api.evaluate(field, {
+      this: this.parentPage,
+      ...page
+    })
+    // console.log('Field:', field, 'Page:', page.file.path, 'Context:', this.context.file.path, 'Value:', result)
     return result.successful
       ? result.value as TResult
       : null
@@ -297,27 +314,21 @@ export default class TileWrangler {
 
     // Render the group name, if there is one
     if (this.groupBy && tile.group) {
-      tile.group = await this.renderFieldValue({ name: this.groupBy, value: tile.group }, page.file.path)
+      tile.group = await this.renderFieldValue({ expression: this.groupBy, value: tile.group }, page.file.path)
     }
 
     // Fetch/evaluate all remaining field values
     fields = this.getFieldValues(page, fields, true)
 
     tile.fields = await Promise.all(
-      this.fields.map(name => ({
-        name,
-        result: this.api.evaluate(name, page)
-      }))
-      .filter(({ result }) => result.successful)
-      .map(({ name, result }) => ({
-        name,
-        value: (result as Success<any, string>).value
-      }))
-      .filter(({ value }) => value)
-      .map(async ({name, value}) => ({
-        name,
+      Object.entries(fields).map(([expression, value]) => ({
+        expression,
+        value
+      })).filter(({ value }) => value !== null)
+      .map(async ({ expression, value }) => ({
+        expression,
         value,
-        html: await this.renderFieldValue({ name, value }, page.file.path)
+        html: await this.renderFieldValue({ expression, value }, page.file.path)
       })))
 
     return tile
@@ -365,8 +376,8 @@ export default class TileWrangler {
     }
   }
 
-  async renderFieldValue (field: { name: string, value: string}, path: string): Promise<string> {
-    if (field.name === 'file.name') {
+  async renderFieldValue (field: { expression: string, value: string}, path: string): Promise<string> {
+    if (field.expression === 'file.name') {
       // Don't "render" filenames as markdown.
       // TODO: There's probably a bunch of other file metadata that this
       // should apply to. Either that, or "don't render" is the default,

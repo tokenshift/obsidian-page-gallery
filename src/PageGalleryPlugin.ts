@@ -43,12 +43,15 @@ export default class PageGalleryPlugin extends Plugin {
       }
 
       const config = Config.parse(source)
+
       const child = new PageGalleryRenderChild({
+        sourcePath: ctx.sourcePath,
         plugin: this,
         config,
         api: this.api,
         element: el
       })
+
       ctx.addChild(child)
     } catch (err) {
       const pre = document.createElement('pre')

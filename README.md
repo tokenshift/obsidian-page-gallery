@@ -31,6 +31,7 @@ Options in the `page-gallery` block are parsed using YAML.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 |`from`|`string`|-|Query for pages to include in the gallery. Uses the same query syntax as [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview).|
+|`where`|`string`|-|Additional expression to filter out pages that you want to omit from the gallery.|
 |`fields`|`Array<string>`|[]|List of fields to display in the gallery, under the image. Supports both [frontmatter and inline fields](https://blacksmithgu.github.io/obsidian-dataview/data-annotation/).|
 |`limit`|`number`|100|Limit on the number of pages that will be displayed in the gallery. Set this to `null` to display all of the pages matched by the `from` query.|
 |`groupBy`|`string`|-|Groups pages by a particular field (or [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview) expression).|

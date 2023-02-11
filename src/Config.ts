@@ -15,6 +15,7 @@ export const GOLDEN_RATIO = 1.618
 export const SCHEMA = {
   debug: { type: 'boolean' },
   from: { presence: { allowEmpty: false}, type: 'string' },
+  where: { type: 'string' },
   fields: { type: 'array' },
   limit: { type: 'number' },
   groupBy: { type: 'string' },
@@ -33,6 +34,7 @@ export default class Config {
   debug: boolean
 
   from: string
+  where: string
   fields: string[]
   limit: number | null
   groupBy: string | null
@@ -68,6 +70,7 @@ export default class Config {
 
     this.debug = config.debug
     this.from = config.from.trim().replace(/[\n\r]+/g, ' ')
+    this.where = config.where ? config.where.trim().replace(/[\n\r]+/g, ' ') : null
     this.fields = config.fields
     this.limit = config.limit
     this.groupBy = config.groupBy
