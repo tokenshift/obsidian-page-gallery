@@ -6,6 +6,6 @@
 
 <div
   class="page-gallery__field"
-  data-page-gallery-field-name={field.name}>
+  data-page-gallery-field-expression={field.expression}>
   {@html field.html}
 </div>

@@ -38,7 +38,7 @@ export type Tile = {
 }
 
 export type Field = {
-  name: string
+  expression: string
   value: string
   html: string
 }
@@ -132,7 +132,7 @@ export default class TileWrangler {
     const filtered = this.limit == null ? sorted : sorted.slice(0, this.limit)
 
     // Convert remaining pages into tiles.
-    const tiles = await Promise.all(filtered.map(p => this.getCachedTileInfo(p)))
+    const tiles = await Promise.all(filtered.map(p => this.getTileInfo(p)))
 
     // Group tiles into TileGroups and return.
     const groups: TileGroup[] = []
@@ -274,10 +274,6 @@ export default class TileWrangler {
     }
   }
 
-  getCachedTileInfo (page: PageWithFieldValues): Promise<Tile> {
-    return this.getTileInfo(page)
-  }
-
   async getTileInfo ({ page, fields }: PageWithFieldValues): Promise<Tile> {
     const tile: Tile = {
       group: this.groupBy
@@ -297,30 +293,21 @@ export default class TileWrangler {
 
     // Render the group name, if there is one
     if (this.groupBy && tile.group) {
-      tile.group = await this.renderFieldValue({ name: this.groupBy, value: tile.group }, page.file.path)
+      tile.group = await this.renderFieldValue({ expression: this.groupBy, value: tile.group }, page.file.path)
     }
 
     // Fetch/evaluate all remaining field values
     fields = this.getFieldValues(page, fields, true)
 
-    // TODO: This is not using the above `fields`, or going through this.evaluate,
-    // which handles the current page context. Whhy not? Do I need to replace
-    // this.fields.map w/ fields.map, and drop the 'successful' check here?
     tile.fields = await Promise.all(
-      this.fields.map(name => ({
-        name,
-        result: this.api.evaluate(name, page)
-      }))
-      .filter(({ result }) => result.successful)
-      .map(({ name, result }) => ({
-        name,
-        value: (result as Success<any, string>).value
-      }))
-      .filter(({ value }) => value)
-      .map(async ({name, value}) => ({
-        name,
+      Object.entries(fields).map(([expression, value]) => ({
+        expression,
+        value
+      })).filter(({ value }) => value !== null)
+      .map(async ({ expression, value }) => ({
+        expression,
         value,
-        html: await this.renderFieldValue({ name, value }, page.file.path)
+        html: await this.renderFieldValue({ expression, value }, page.file.path)
       })))
 
     return tile
@@ -368,8 +355,8 @@ export default class TileWrangler {
     }
   }
 
-  async renderFieldValue (field: { name: string, value: string}, path: string): Promise<string> {
-    if (field.name === 'file.name') {
+  async renderFieldValue (field: { expression: string, value: string}, path: string): Promise<string> {
+    if (field.expression === 'file.name') {
       // Don't "render" filenames as markdown.
       // TODO: There's probably a bunch of other file metadata that this
       // should apply to. Either that, or "don't render" is the default,
