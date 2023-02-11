@@ -2,7 +2,7 @@ import mime from 'mime'
 import objectPath from 'object-path'
 
 import { Component, MarkdownPreviewView, TFile } from 'obsidian'
-import type { DataviewApi, Success } from "obsidian-dataview"
+import type { DataviewApi } from "obsidian-dataview"
 
 import type PageGalleryPlugin from './PageGalleryPlugin'
 
@@ -50,6 +50,7 @@ export type TileWranglerOptions = {
   api: DataviewApi
 
   from: string | null
+  where: string | null
   limit: number | null
   fields: string[]
 
@@ -70,6 +71,7 @@ export default class TileWrangler {
   api: DataviewApi
 
   from: string | null
+  where: string | null
   limit: number | null
   fields: string[]
   groupBy: string | null
@@ -87,6 +89,7 @@ export default class TileWrangler {
     this.component = options.component
     this.api = options.api
     this.from = options.from || null
+    this.where = options.where || null
     this.limit = options.limit
     this.fields = options.fields
     this.groupBy = options.groupBy || null
@@ -156,13 +159,19 @@ export default class TileWrangler {
    * Get all pages matching the `from` query.
    */
   getPages () {
-    return this.from
+    const pages = this.from
       ? this.api.pages(this.from)
       : this.api.pages()
+
+    if (this.where) {
+      return pages.filter(p => this.evaluate(this.where as string, p) == true)
+    } else {
+      return pages
+    }
   }
 
   /**
-   * Get all pages matching the `from` query, filtered by the
+   * Get all pages matching the `from` and `where` options, filtered by the
    * current filter query.
    */
   getFilteredPages () {

@@ -70,7 +70,7 @@ export default class Config {
 
     this.debug = config.debug
     this.from = config.from.trim().replace(/[\n\r]+/g, ' ')
-    this.where = config.where.trim().replace(/[\n\r]+/g, ' ')
+    this.where = config.where ? config.where.trim().replace(/[\n\r]+/g, ' ') : null
     this.fields = config.fields
     this.limit = config.limit
     this.groupBy = config.groupBy

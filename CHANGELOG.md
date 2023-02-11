@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+* Added a `where` option to the gallery config to allow pages to be more
+  easily filtered out.
+* Added `this` value to all field evaluations (including `where` and `sortBy`).
+  Previously, it was impossible to use `this` (e.g. `this.page.path`) to get
+  details of the containing page.
+
 ## [0.4.0] - 2022-12-23
 
 ### Added
