@@ -1174,9 +1174,9 @@
   "version" "1.0.1"
 
 "json5@^2.2.1":
-  "integrity" "sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA=="
-  "resolved" "https://registry.npmjs.org/json5/-/json5-2.2.1.tgz"
-  "version" "2.2.1"
+  "integrity" "sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg=="
+  "resolved" "https://registry.npmjs.org/json5/-/json5-2.2.3.tgz"
+  "version" "2.2.3"
 
 "kleur@^4.1.5":
   "integrity" "sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ=="
@@ -1224,10 +1224,10 @@
   dependencies:
     "yallist" "^4.0.0"
 
-"luxon@^2.4.0":
-  "integrity" "sha512-IDkEPB80Rb6gCAU+FEib0t4FeJ4uVOuX1CQ9GsvU3O+JAGIgu0J7sf1OarXKaKDygTZIoJyU6YdZzTFRu+YR0A=="
-  "resolved" "https://registry.npmjs.org/luxon/-/luxon-2.5.0.tgz"
-  "version" "2.5.0"
+"luxon@^3.2.0":
+  "integrity" "sha512-QrwPArQCNLAKGO/C+ZIilgIuDnEnKx5QYODdDtbFaxzsbZcc/a7WFq7MhsVYgRlwawLtvOUESTlfJ+hc/USqPg=="
+  "resolved" "https://registry.npmjs.org/luxon/-/luxon-3.2.1.tgz"
+  "version" "3.2.1"
 
 "magic-string@^0.25.7":
   "integrity" "sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ=="
@@ -1343,16 +1343,16 @@
     "tslib" "2.1.0"
 
 "obsidian-dataview@^0.5.51":
-  "integrity" "sha512-DXf+CdsWdBBVIIVJjhFE1V3voWjIp5I6ZT5KrU20fMMMbOw9DBRA6UvPFNaGVvXKfTgmrvxbR8Xx05mhnKTu0g=="
-  "resolved" "https://registry.npmjs.org/obsidian-dataview/-/obsidian-dataview-0.5.51.tgz"
-  "version" "0.5.51"
+  "integrity" "sha512-t52I2ebvO6gCUakfJvuQb7qbNx0yKTdfJJAlJvyyj8+DliwM5wZXFMEio+YVLlXMyRSw2ZGq8eGp19anEIuDbg=="
+  "resolved" "https://registry.npmjs.org/obsidian-dataview/-/obsidian-dataview-0.5.55.tgz"
+  "version" "0.5.55"
   dependencies:
     "@codemirror/language" "git+https://github.com/lishid/cm-language.git"
     "@codemirror/state" "^6.0.1"
     "@codemirror/view" "^6.0.1"
     "emoji-regex" "^10.0.0"
     "localforage" "^1.10.0"
-    "luxon" "^2.4.0"
+    "luxon" "^3.2.0"
     "obsidian-calendar-ui" "^0.3.12"
     "papaparse" "^5.3.1"
     "parsimmon" "^1.18.0"
