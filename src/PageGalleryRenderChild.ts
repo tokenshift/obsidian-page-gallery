@@ -46,7 +46,6 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
 
     const parentPage = api.page(this.sourcePath)
 
-
     this.wrangler = new TileWrangler({
       ...config,
       parentPage: parentPage as Page,
