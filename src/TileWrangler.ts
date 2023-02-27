@@ -145,7 +145,7 @@ export default class TileWrangler {
     // Convert remaining pages into tiles.
     const tiles = await Promise.all(filtered.map(p => this.getCachedTileInfo(p)))
 
-    // Group tiles into TileGroups and return.
+    // Group tiles into TileGroups.
     const groups: TileGroup[] = []
     let group: TileGroup | null = null
     for (const tile of tiles) {
@@ -157,6 +157,17 @@ export default class TileWrangler {
         groups.push(group)
       } else {
         group.tiles.push(tile)
+      }
+    }
+
+    // Strip non-displayed fields (i.e. those that were used for `groupBy` and
+    // `sortBy`) from the list of fields to be shown on the tile, and put them
+    // (back) in the order they were specified in the config.
+    for (const group of groups) {
+      for (const tile of group.tiles) {
+        const fields: Record<string, Field> = tile.fields.reduce((fs, f) => ({...fs, [f.expression]: f}), {})
+        // tile.fields = tile.fields.filter(f => this.fields.includes(f.expression))
+        tile.fields = this.fields.map(exp => fields[exp])
       }
     }
 
