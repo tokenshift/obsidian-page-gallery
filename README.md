@@ -39,7 +39,7 @@ Options in the `page-gallery` block are parsed using YAML.
 |`filter`|`boolean`|true|Whether  or  not to show the filter bar.|
 |`columns`|`number`|4|Number of columns to display at full width.|
 |`gutterSize`|`string`|`16px`|Size of the gutter between images.|
-|`orientation`|`portrait`|`landscape`|`portrait`|Whether to display styles in portrait or landscape mode. This controls the default `width` (see below).|
+|`orientation`|`string`|`portrait`|Whether to display styles in portrait or landscape mode. This controls the default `width` (see below).|
 |`width`|`string`|Calculated from `columns` and `gutterSize`.|Display width of each image in the gallery. Overrides `columns`.|
 |`height`|`string`|Calculated from `imageWidth`.|Display height of each image in the gallery.|
 |`size`|`string`|`cover`|How the image should be scaled to fit within the gallery tile. See [CSS background-size](https://developer.mozilla.org/en-US/docs/Web/CSS/background-size) for available options.|

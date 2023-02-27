@@ -109,6 +109,7 @@
   text-overflow: ellipsis;
 }
 
-.page-gallery__field[data-page-gallery-field-name="file.name"] {
+.page-gallery__field[data-page-gallery-field-expression="file.name"]:first-child,
+.page-gallery__field[data-page-gallery-field-expression="file.path"]:first-child {
   font-weight: bold;
 }

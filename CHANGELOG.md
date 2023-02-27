@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+* Parameters/expressions used for `groupBy` and `sortBy` options no longer show
+  up as fields unless they're also explicitly included in the `fields` option.
+
+### Modified
+
+* Both `file.path` and `file.name` will now be displayed in bold if included in
+  the field list, but *only* if they're the first field listed.
+
 ## [0.4.1] - 2023-02-11
 
 ### Added
