@@ -1,7 +1,6 @@
 # Changelog
 
 ## [0.4.2] - 2023-02-27
-
 ### Fixed
 
 * Parameters/expressions used for `groupBy` and `sortBy` options no longer show
