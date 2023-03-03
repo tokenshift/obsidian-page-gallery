@@ -1,7 +1,6 @@
 import type { Component } from 'obsidian'
 import type { DataviewApi } from 'obsidian-dataview'
-
-export type Page = Record<string, any>
+import type { Page } from './PageService'
 
 export default class ExpressionCache {
   component: Component

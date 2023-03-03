@@ -1,6 +1,7 @@
 <script lang="ts">
+  import type { Component } from 'obsidian'
   import type { DataviewApi } from 'obsidian-dataview'
-  import { onMount, setContext } from 'svelte'
+  import { setContext } from 'svelte'
   import { writable } from 'svelte/store'
 
   import PageGalleryFilter from './PageGalleryFilter.svelte'
@@ -10,18 +11,18 @@
   import type Config from '../Config'
   import ExpressionCache from '../ExpressionCache'
   import PageService from '../PageService'
+  import PageContentService from '../PageContentService'
   import type PageGalleryPlugin from '../PageGalleryPlugin'
-    import type { Component } from 'obsidian';
 
   export let plugin: PageGalleryPlugin
   export let component: Component
   export let api: DataviewApi
   export let config: Config
   export let parentPage: Record<string, any>
-  export let lastUpdated: Date
 
   const cache = new ExpressionCache({ api, component, parentPage })
-  const pageService = new PageService({ plugin, component, api, cache })
+  const pageService = new PageService({ api, cache })
+  const pageContentService = new PageContentService({ plugin, component })
 
   let refreshCurrentView: () => void
 
@@ -32,6 +33,7 @@
   setContext('DataviewApi', api)
   setContext('ExpressionCache', cache)
   setContext('PageService', pageService)
+  setContext('PageContentService', pageContentService)
 
   let clientWidth: number
   let filter = writable<string>('')

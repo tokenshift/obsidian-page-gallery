@@ -1,17 +1,6 @@
-import mime from 'mime'
-import { Component, MarkdownPreviewView, TFile } from 'obsidian'
 import type { DataviewApi } from 'obsidian-dataview'
 
 import type ExpressionCache from './ExpressionCache'
-import type PageGalleryPlugin from './PageGalleryPlugin'
-
-export const IMG_MIME_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/gif',
-  'image/bmp',
-  'image/webp'
-]
 
 export type Page = Record<string, any>
 
@@ -22,19 +11,13 @@ export type PageGroup = {
 }
 
 export default class PageService {
-  plugin: PageGalleryPlugin
-  component: Component
   api: DataviewApi
   cache: ExpressionCache
 
   constructor(options: {
-    plugin: PageGalleryPlugin,
-    component: Component,
     api: DataviewApi,
     cache: ExpressionCache
   }) {
-    this.plugin = options.plugin
-    this.component = options.component
     this.api = options.api
     this.cache = options.cache
   }
@@ -69,7 +52,6 @@ export default class PageService {
     const sortFn = this.getSortFn({ sortBy, groupBy })
     const sorted: Page[] = Array.from(pages).sort(sortFn)
 
-    // TODO: Group
     const grouped = this.getGroupedPages(groupBy, sorted)
 
     // TODO: Truncate (limit)
@@ -177,50 +159,5 @@ export default class PageService {
     }
 
     return groups
-  }
-
-  async getFirstImageSrc (page: Page): Promise<string | null> {
-    // TODO: Cache this (move to ExpressionCache, or a new PageContentService?)
-    try {
-      const file = this.plugin.app.vault.getAbstractFileByPath(page.file.path)
-
-      if (!(file instanceof TFile)) {
-        return null
-      }
-
-      const source = await this.plugin.app.vault.cachedRead(file as TFile)
-      const rendered = document.createElement('div')
-
-      // The .render-bypass class is included so that we can detect elsewhere
-      // if we're inside another page gallery render call, to short-circuit
-      // recursive rendering.
-      rendered.classList.add('render-bypass')
-
-      MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this.component)
-
-      for (const el of rendered.findAll('.internal-embed[src], img[src]')) {
-        const src = el.getAttribute('src')
-        if (!src) { continue }
-
-        if (el.tagName === 'IMG' && src.match(/^https?:\/\//)) {
-          return src
-        }
-
-        const ext = src.split('.').pop()
-        if (!ext) { continue }
-
-        const mimeType = mime.getType(ext)
-        if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
-
-        const file = this.plugin.app.vault.getFiles().find(f => f.path.endsWith(src))
-        if (!file) { continue }
-        return this.plugin.app.vault.getResourcePath(file)
-      }
-
-      return null
-    } catch (err) {
-      console.error(err)
-      return null
-    }
   }
 }

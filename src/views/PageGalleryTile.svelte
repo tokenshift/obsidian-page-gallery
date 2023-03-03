@@ -2,9 +2,10 @@
   import { getContext } from 'svelte'
 
   import type { ViewConfig } from '../Config'
-  import type { Page } from '../ExpressionCache'
   import type ExpressionCache from '../ExpressionCache'
   import type PageService from '../PageService'
+  import type { Page } from '../PageService'
+  import type PageContentService from 'src/PageContentService'
 
   import PageGalleryTileImage from './PageGalleryTileImage.svelte'
   import PageGalleryTileFallback from './PageGalleryTileFallback.svelte'
@@ -14,6 +15,7 @@
 
   const cache = getContext<ExpressionCache>('ExpressionCache')
   const pageService = getContext<PageService>('PageService')
+  const pageContentService = getContext<PageContentService>('PageContentService')
 
   function getFieldValues () {
     return Promise.all(view.fields
@@ -34,7 +36,7 @@
   style:--image-size={view.size || null}
   style:--image-position={view.position || null}
   style:--image-repeat={view.repeat || null}>
-  {#await pageService.getFirstImageSrc(page)}
+  {#await pageContentService.getFirstImageSrc(page)}
   <div class="page-gallery__tile-loading">Loading...</div>
   {:then imageSrc}
     {#if imageSrc}

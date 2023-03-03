@@ -11,14 +11,12 @@
 
   const pageService = getContext<PageService>('PageService')
 
-  let pageGroups = pageService.getPageGroups({ ...view, filter: $filter } )
-
   export function refresh () {
-    pageGroups = pageService.getPageGroups({ ...view, filter: $filter } )
+    view = view
   }
 </script>
 
-{#await pageGroups}
+{#await pageService.getPageGroups({ ...view, filter: $filter } )}
 <section class="page-gallery__view page-gallery__view--loading">
   Loading...
 </section>
