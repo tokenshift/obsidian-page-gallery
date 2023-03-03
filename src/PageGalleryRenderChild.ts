@@ -2,7 +2,6 @@ import { ulid } from 'ulid'
 
 import { debounce, MarkdownRenderChild } from 'obsidian'
 import type { DataviewApi } from 'obsidian-dataview'
-import { writable } from 'svelte/store'
 
 import type Config from './Config'
 import type PageGalleryPlugin from './PageGalleryPlugin'
@@ -44,9 +43,9 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     this.config = config
   }
 
-  updateTiles = debounce(async () => {
+  refresh = debounce(async () => {
     try {
-      // TODO: How do I force the gallery to update now?
+      this.root.refresh()
     } catch (err) {
       console.error(err)
     }
@@ -64,14 +63,12 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
       }
     })
 
-    this.registerEvent(this.plugin.app.metadataCache.on('dataview:metadata-change' as 'resolved', async () => {
-      await this.updateTiles()
+    this.registerEvent(this.plugin.app.metadataCache.on('dataview:metadata-change' as 'resolved', () => {
+      this.refresh()
     }))
 
-    this.registerEvent(this.plugin.app.metadataCache.on('dataview:index-ready' as 'resolved', async () => {
-      await this.updateTiles()
+    this.registerEvent(this.plugin.app.metadataCache.on('dataview:index-ready' as 'resolved', () => {
+      this.refresh()
     }))
-
-    this.updateTiles()
   }
 }

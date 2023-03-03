@@ -30,7 +30,6 @@ export default class ExpressionCache {
   async renderFieldValue (page: Page, value: any): Promise<string | null> {
     if (!value) { return null }
 
-    // if (value && expression !== 'file.name')
     const temp = document.createElement('div')
     await this.api.renderValue(value, temp, this.component, page.file.path, true)
     return temp.innerHTML

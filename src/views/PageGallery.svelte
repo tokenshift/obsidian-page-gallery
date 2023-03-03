@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { DataviewApi } from 'obsidian-dataview'
-  import { setContext } from 'svelte'
+  import { onMount, setContext } from 'svelte'
   import { writable } from 'svelte/store'
 
   import PageGalleryFilter from './PageGalleryFilter.svelte'
@@ -18,9 +18,16 @@
   export let api: DataviewApi
   export let config: Config
   export let parentPage: Record<string, any>
+  export let lastUpdated: Date
 
-  const cache = new ExpressionCache({ api, parentPage })
+  const cache = new ExpressionCache({ api, component, parentPage })
   const pageService = new PageService({ plugin, component, api, cache })
+
+  let refreshCurrentView: () => void
+
+  export function refresh () {
+    refreshCurrentView()
+  }
 
   setContext('DataviewApi', api)
   setContext('ExpressionCache', cache)
@@ -66,6 +73,6 @@
     </ol>
     {/if}
 
-    <PageGalleryView view={selectedView} {filter} />
+    <PageGalleryView view={selectedView} {filter} bind:refresh={refreshCurrentView} />
   </div>
 </div>

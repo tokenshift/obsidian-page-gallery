@@ -1,21 +1,24 @@
 <script lang="ts">
-  // import type { DataviewApi } from 'obsidian-dataview'
   import { getContext } from 'svelte'
+  import type { Readable } from 'svelte/store'
 
-  import type { ViewConfig } from 'src/Config'
-  import type PageService from 'src/PageService'
-    import type { Readable } from 'svelte/store';
-    import PageGalleryTile from './PageGalleryTile.svelte';
+  import type { ViewConfig } from '../Config'
+  import type PageService from '../PageService'
+  import PageGalleryTile from './PageGalleryTile.svelte'
 
   export let view: ViewConfig
   export let filter: Readable<string>
 
-  // const api = getContext<DataviewApi>('DataviewApi')
-  // const cache = getContext<ExpressionCache>('ExpressionCache')
   const pageService = getContext<PageService>('PageService')
+
+  let pageGroups = pageService.getPageGroups({ ...view, filter: $filter } )
+
+  export function refresh () {
+    pageGroups = pageService.getPageGroups({ ...view, filter: $filter } )
+  }
 </script>
 
-{#await pageService.getPageGroups({ ...view, filter: $filter } )}
+{#await pageGroups}
 <section class="page-gallery__view page-gallery__view--loading">
   Loading...
 </section>
