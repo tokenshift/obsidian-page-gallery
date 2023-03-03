@@ -1,27 +1,64 @@
 <script type="ts">
-	import PageGalleryField from './PageGalleryField.svelte'
-	import PageGalleryTileFallback from './PageGalleryTileFallback.svelte'
-	import PageGalleryTileImage from './PageGalleryTileImage.svelte'
-  import type { Tile } from 'src/TileWrangler'
+  import { getContext } from 'svelte'
 
-  export let tile: Tile
+  import type { ViewConfig } from '../Config'
+  import type { Page } from '../ExpressionCache'
+  import type ExpressionCache from '../ExpressionCache'
+  import type PageService from '../PageService'
+
+  import PageGalleryTileImage from './PageGalleryTileImage.svelte'
+  import PageGalleryTileFallback from './PageGalleryTileFallback.svelte'
+
+  export let page: Page
+  export let view: ViewConfig
+
+  const cache = getContext<ExpressionCache>('ExpressionCache')
+  const pageService = getContext<PageService>('PageService')
+
+  function getFieldValues () {
+    return Promise.all(view.fields
+      .map(expression => ({
+        expression,
+        value: cache.evaluate(expression, page)
+      }))
+      .filter(field => field.value)
+      .map(async ({ expression, value }) => ({
+        expression,
+        value,
+        rendered: await cache.renderFieldValue(page, value)
+      })))
+  }
 </script>
 
 <div class="page-gallery__tile"
-  style:--image-size={tile.image.size || null}
-  style:--image-position={tile.image.position || null}
-  style:--image-repeat={tile.image.repeat || null}>
-  {#if tile.image.src}
-  <PageGalleryTileImage {tile} />
-  {:else}
-  <PageGalleryTileFallback {tile} />
-  {/if}
+  style:--image-size={view.size || null}
+  style:--image-position={view.position || null}
+  style:--image-repeat={view.repeat || null}>
+  {#await pageService.getFirstImageSrc(page)}
+  <div class="page-gallery__tile-loading">Loading...</div>
+  {:then imageSrc}
+    {#if imageSrc}
+    <PageGalleryTileImage {page} {imageSrc} />
+    {:else}
+    <PageGalleryTileFallback {page} />
+    {/if}
+  {/await}
 
-  {#if tile.fields.length > 0}
+  {#await getFieldValues() then fields}
+  {#if fields.length > 0}
   <div class="page-gallery__fields">
-    {#each tile.fields as field}
-    <PageGalleryField {field} />
+    {#each fields as field}
+    <div class="page-gallery__field"
+      data-page-gallery-field-expression={field.expression}
+      data-page-gallery-field-value={field.value}>
+      {#if field.expression !== 'file.name'}
+      {@html field.rendered}
+      {:else}
+      {field.value}
+      {/if}
+    </div>
     {/each}
   </div>
   {/if}
+  {/await}
 </div>

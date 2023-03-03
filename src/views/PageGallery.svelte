@@ -1,30 +1,50 @@
 <script lang="ts">
-	import type { Writable } from 'svelte/store';
+  import type { DataviewApi } from 'obsidian-dataview'
+  import { setContext } from 'svelte'
+  import { writable } from 'svelte/store'
 
-  import PageGalleryTile from "./PageGalleryTile.svelte"
-	import PageGalleryFilter from './PageGalleryFilter.svelte'
-  import type { TileGroup } from 'src/TileWrangler';
+  import PageGalleryFilter from './PageGalleryFilter.svelte'
+  import PageGalleryView from './PageGalleryView.svelte'
 
-  import type Config from 'src/Config';
+  import type { ViewConfig } from '../Config'
+  import type Config from '../Config'
+  import ExpressionCache from '../ExpressionCache'
+  import PageService from '../PageService'
+  import type PageGalleryPlugin from '../PageGalleryPlugin'
+    import type { Component } from 'obsidian';
 
+  export let plugin: PageGalleryPlugin
+  export let component: Component
+  export let api: DataviewApi
   export let config: Config
-  export let filter: Writable<string>
-  export let groups: TileGroup[] = []
+  export let parentPage: Record<string, any>
+
+  const cache = new ExpressionCache({ api, parentPage })
+  const pageService = new PageService({ plugin, component, api, cache })
+
+  setContext('DataviewApi', api)
+  setContext('ExpressionCache', cache)
+  setContext('PageService', pageService)
 
   let clientWidth: number
+  let filter = writable<string>('')
+
+  let selectedViewIndex: number = 0
+  let selectedView = config.views[selectedViewIndex]
+
+  function handleSelectView (view: ViewConfig, viewIndex: number) {
+    selectedView = view
+    selectedViewIndex = viewIndex
+  }
 </script>
 
 <div class="page-gallery"
   bind:clientWidth={clientWidth}
-  style:--page-gallery-width={`${clientWidth}px`}
-  style:--custom-columns={config.columns || null}
-  style:--custom-gutter-size={config.gutterSize || null}
-  style:--custom-aspect-ratio={config.aspectRatio || null}
-  style:--custom-image-height={config.height || null}
-  style:--custom-image-width={config.width || null}
-  style:--custom-image-size={config.size || null}
-  style:--custom-image-position={config.position || null}
-  style:--custom-image-repeat={config.repeat || null}>
+  style:--page-gallery-width={`${clientWidth}px`}>
+  {#if config.title}
+  <header class="page-gallery__title">{config.title}</header>
+  {/if}
+
   {#if config.debug}
   <pre class="page-gallery__debug">{JSON.stringify(config, null, 2)}</pre>
   {/if}
@@ -33,21 +53,19 @@
   <PageGalleryFilter {filter} />
   {/if}
 
-  <div class="page-gallery__groups">
-    {#each groups as group}
-    <section class="page-gallery__group">
-      {#if group.name}
-      <header class="page-gallery__group-title">{@html group.name}</header>
-      {:else if groups.length > 1}
-      <header class="page-gallery__group-title fallback">Other</header>
-      {/if}
+  <div class="page-gallery__views">
+    {#if config.views.length > 1}
+    <ol class="page-gallery__views-header">
+      {#each config.views as view, index}
+      <li class:selected={index === selectedViewIndex}
+          on:click={() => handleSelectView(view, index)}
+          on:keypress={() => handleSelectView(view, index)}>
+        {view.name}
+      </li>
+      {/each}
+    </ol>
+    {/if}
 
-      <div class="page-gallery__tiles">
-        {#each group.tiles as tile}
-        <PageGalleryTile {tile} />
-        {/each}
-      </div>
-    </section>
-    {/each}
+    <PageGalleryView view={selectedView} {filter} />
   </div>
 </div>

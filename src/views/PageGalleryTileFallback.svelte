@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Tile } from 'src/TileWrangler'
+  import type { Page } from 'src/ExpressionCache'
 
-  export let tile: Tile
+  export let page: Page
 </script>
 
 <a class="page-gallery__fallback internal-link"
-  data-href={tile.href}
-  href={tile.href}
-  rel="noopener">{tile.filename}</a>
+  data-href={page.file.path}
+  href={page.file.path}
+  rel="noopener">{page.file.name}</a>

@@ -47,9 +47,9 @@ export default class PageGalleryPlugin extends Plugin {
       const child = new PageGalleryRenderChild({
         sourcePath: ctx.sourcePath,
         plugin: this,
-        config,
         api: this.api,
-        element: el
+        element: el,
+        config
       })
 
       ctx.addChild(child)

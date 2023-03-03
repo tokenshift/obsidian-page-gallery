@@ -7,7 +7,6 @@ import { writable } from 'svelte/store'
 import type Config from './Config'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import PageGallery from './views/PageGallery.svelte'
-import TileWrangler, { type Page } from './TileWrangler'
 
 const DEBOUNCE_RENDER_TIME = 100
 
@@ -21,13 +20,12 @@ export type PageGalleryRenderChildOptions = {
 
 export default class PageGalleryRenderChild extends MarkdownRenderChild {
   id: string = ulid()
-
-  sourcePath: string
   plugin: PageGalleryPlugin
+  api: DataviewApi
+  sourcePath: string
+  parentPage: Record<string, any>
   config: Config
-  gallery: PageGallery
-
-  wrangler: TileWrangler
+  root: PageGallery
 
   constructor (options: PageGalleryRenderChildOptions) {
     const {
@@ -41,46 +39,30 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     super(element)
 
     this.plugin = plugin
+    this.api = api
+    this.parentPage = api.page(sourcePath) as Record<string, any>
     this.config = config
-    this.sourcePath = sourcePath
-
-    const parentPage = api.page(this.sourcePath)
-
-    this.wrangler = new TileWrangler({
-      ...config,
-      parentPage: parentPage as Page,
-      plugin,
-      component: this,
-      api
-    })
   }
 
   updateTiles = debounce(async () => {
     try {
-      const groups = await this.wrangler.getTileGroups()
-      this.gallery.$set({ groups })
+      // TODO: How do I force the gallery to update now?
     } catch (err) {
       console.error(err)
     }
   }, DEBOUNCE_RENDER_TIME, true)
 
   async onload () {
-    const filter = writable('')
-    this.gallery = new PageGallery({
+    this.root = new PageGallery({
       target: this.containerEl,
       props: {
+        plugin: this.plugin,
+        component: this,
+        api: this.api,
         config: this.config,
-        filter: filter,
-        groups: []
+        parentPage: this.parentPage
       }
     })
-
-    filter.subscribe(f => {
-      this.wrangler.filter = f
-      this.updateTiles()
-    })
-
-    this.updateTiles()
 
     this.registerEvent(this.plugin.app.metadataCache.on('dataview:metadata-change' as 'resolved', async () => {
       await this.updateTiles()
@@ -89,5 +71,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     this.registerEvent(this.plugin.app.metadataCache.on('dataview:index-ready' as 'resolved', async () => {
       await this.updateTiles()
     }))
+
+    this.updateTiles()
   }
 }
