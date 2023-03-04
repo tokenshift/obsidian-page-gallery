@@ -25,7 +25,7 @@
       .map(async ({ expression, value }) => ({
         expression,
         value,
-        rendered: await cache.renderFieldValue(page, value)
+        rendered: await cache.renderFieldValue(expression, page)
       })))
   }
 </script>

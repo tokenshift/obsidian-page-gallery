@@ -1,9 +1,11 @@
 import mime from 'mime'
+import NodeCache from 'node-cache'
 import { Component, MarkdownPreviewView, TFile } from 'obsidian'
 
-import PageCache from './PageCache'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import type { Page } from './PageService'
+
+const CACHE_TTL = 60
 
 export const IMG_MIME_TYPES = [
   'image/jpeg',
@@ -14,10 +16,6 @@ export const IMG_MIME_TYPES = [
 ]
 
 export default class PageContentService {
-  _contentCache  = new PageCache<string | null>()
-  _renderedCache = new PageCache<HTMLElement | null>()
-  _imageSrcCache = new PageCache<string | null>()
-
   plugin: PageGalleryPlugin
   component: Component
 
@@ -29,61 +27,86 @@ export default class PageContentService {
     this.component = options.component
   }
 
-  async getContent (page: Page) {
-    return await this._contentCache.fetch(page, async () => {
-      const file = this.plugin.app.vault.getAbstractFileByPath(page.file.path)
+  _contentCache = new NodeCache({ stdTTL: CACHE_TTL })
+  async getContent (page: Page): Promise<string | null> {
+    const cacheKey = JSON.stringify([
+      page.file.path,
+      page.file.mtime,
+      page.file.size
+    ])
 
-      if (!(file instanceof TFile)) {
-        return null
-      }
+    const cached = this._contentCache.get<string | null>(cacheKey)
+    if (cached !== undefined) { return cached }
 
-      return await this.plugin.app.vault.cachedRead(file as TFile)
-    })
-  }
+    const file = this.plugin.app.vault.getAbstractFileByPath(page.file.path)
 
-  async getRenderedContent (page: Page) {
-    return await this._renderedCache.fetch(page, async () => {
-      const source = await this.getContent(page)
-      if (!source) { return null }
-
-      const rendered = document.createElement('div')
-
-      // The .render-bypass class is included so that we can detect elsewhere
-      // if we're inside another page gallery render call, to short-circuit
-      // recursive rendering.
-      rendered.classList.add('render-bypass')
-
-      MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this.component)
-
-      return rendered
-    })
-  }
-
-  async getFirstImageSrc (page: Page): Promise<string | null> {
-    return await this._imageSrcCache.fetch(page, async () => {
-      const rendered = await this.getRenderedContent(page)
-      if (!rendered) { return null }
-
-      for (const el of rendered.findAll('.internal-embed[src], img[src]')) {
-        const src = el.getAttribute('src')
-        if (!src) { continue }
-
-        if (el.tagName === 'IMG' && src.match(/^https?:\/\//)) {
-          return src
-        }
-
-        const ext = src.split('.').pop()
-        if (!ext) { continue }
-
-        const mimeType = mime.getType(ext)
-        if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
-
-        const file = this.plugin.app.vault.getFiles().find(f => f.path.endsWith(src))
-        if (!file) { continue }
-        return this.plugin.app.vault.getResourcePath(file)
-      }
-
+    if (!(file instanceof TFile)) {
       return null
-    })
+    }
+
+    const content = await this.plugin.app.vault.cachedRead(file as TFile)
+
+    this._contentCache.set(cacheKey, content)
+    return content
+  }
+
+  async getRenderedContent (page: Page): Promise<HTMLElement | null> {
+    const source = await this.getContent(page)
+    if (!source) { return null }
+
+    const rendered = document.createElement('div')
+
+    // The .render-bypass class is included so that we can detect elsewhere
+    // if we're inside another page gallery render call, to short-circuit
+    // recursive rendering.
+    rendered.classList.add('render-bypass')
+
+    MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this.component)
+
+    return rendered
+  }
+
+  _firstImageSrcCache = new NodeCache({ stdTTL: CACHE_TTL })
+  async getFirstImageSrc (page: Page): Promise<string | null> {
+    const cacheKey = JSON.stringify([
+      page.file.path,
+      page.file.mtime,
+      page.file.size
+    ])
+
+    const cached = this._firstImageSrcCache.get<string | null>(cacheKey)
+    if (cached !== undefined) { return cached }
+
+    const rendered = await this.getRenderedContent(page)
+    if (!rendered) {
+      this._firstImageSrcCache.set(cacheKey, null)
+      return null
+    }
+
+    for (const el of rendered.findAll('.internal-embed[src], img[src]')) {
+      const src = el.getAttribute('src')
+      if (!src) { continue }
+
+      if (el.tagName === 'IMG' && src.match(/^https?:\/\//)) {
+        return src
+      }
+
+      const ext = src.split('.').pop()
+      if (!ext) { continue }
+
+      const mimeType = mime.getType(ext)
+      if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
+
+      const file = this.plugin.app.vault.getFiles().find(f => f.path.endsWith(src))
+      if (!file) { continue }
+
+      const path = this.plugin.app.vault.getResourcePath(file)
+
+      this._firstImageSrcCache.set(cacheKey, path)
+      return path
+    }
+
+    this._firstImageSrcCache.set(cacheKey, null)
+    return null
   }
 }

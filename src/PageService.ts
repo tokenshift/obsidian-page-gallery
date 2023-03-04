@@ -44,7 +44,7 @@ export default class PageService {
       : this.api.pages()
 
     if (where) {
-      pages.filter(p => this.cache.evaluate(where, p) == true)
+      pages = pages.filter(p => this.cache.evaluate(where, p))
     }
 
     if (filter && filter.trim() != '') {
