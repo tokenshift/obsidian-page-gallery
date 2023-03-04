@@ -14,7 +14,6 @@ export default class ExpressionCache {
   }
 
   evaluate<TResult> (expression: string, targetPage: Page) {
-    // TODO: Cache these results based on parentPage and targetPage mod times.
     const result = this.api.evaluate(expression, {
       ...targetPage,
       this: this.parentPage
@@ -23,7 +22,6 @@ export default class ExpressionCache {
     return result.successful
       ? result.value as TResult
       : null
-
   }
 
   async renderFieldValue (page: Page, value: any): Promise<string | null> {
