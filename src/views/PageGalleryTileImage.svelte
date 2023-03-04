@@ -1,13 +1,14 @@
 <script lang="ts">
-	import type { Tile } from 'src/TileWrangler'
+  import type { Page } from '../PageService'
 
-  export let tile: Tile
+  export let page: Page
+  export let imageSrc: string
 </script>
 
 <a class="page-gallery__image internal-link"
-  data-href={tile.href}
-  href={tile.href}
+  data-href={page.file.path}
+  href={page.file.path}
   rel="noopener"
-  style:background-image={`url('${tile.image.src}')`}>
-  <span class="page-gallery__hidden">Link to {tile.filename}</span>
+  style:background-image={`url('${imageSrc}')`}>
+  <span class="page-gallery__hidden">Link to {page.file.name}</span>
 </a>

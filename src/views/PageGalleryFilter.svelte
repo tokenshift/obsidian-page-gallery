@@ -14,5 +14,5 @@
 <div class="page-gallery__filter">
   <label for={id}>🔎</label>
   <input id={id} type="text" bind:value={$filter}>
-  <a class="page-gallery__filter-clear" title="Clear" href="javascript:;" on:click={clearFilter}>❌</a>
+  <span class="page-gallery__filter-clear" role="button" title="Clear" tabindex="0" on:click={clearFilter} on:keypress={clearFilter}>❌</span>
 </div>

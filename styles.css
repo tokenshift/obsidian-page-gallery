@@ -1,22 +1,17 @@
 .page-gallery {
-  --columns: var(--custom-columns, 4);
-  --gutter-size: var(--custom-gutter-size, 16px);
-  --aspect-ratio: var(--custom-aspect-ratio, 1.618);
-  --image-width: var(--custom-image-width, calc(
-    (var(--fill-line-width, 700px)
-    - (var(--columns) - 1) * var(--gutter-size))
-    / var(--columns)));
-  --image-height: var(--custom-image-height, calc(var(--aspect-ratio) * var(--image-width)));
-  --image-size: var(--custom-image-size, cover);
-  --image-position: var(--custom-image-position, center);
-  --image-repeat: var(--custom-image-repeat, no-repeat);
-
   display: flex;
   flex-direction: column;
 }
 
 .page-gallery  * {
   box-sizing: border-box;
+}
+
+.page-gallery__title {
+  font-size: 120%;
+  font-weight: bolder;
+  margin-bottom: 0.2em;
+  text-align: center;
 }
 
 .page-gallery__filter {
@@ -38,6 +33,45 @@
   border-radius: 4px;
   filter: none;
   text-decoration: none;
+}
+
+.page-gallery__views-header {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-inline-start: 0;
+}
+
+.page-gallery__views-header-item {
+  border-radius: 4px;
+  margin: 0 0.5em 0.5em 0;
+  padding: 0 0.4em 0.2em 0.4em
+}
+
+.page-gallery__views-header-item:focus,
+.page-gallery__views-header-item:hover {
+  background: linear-gradient(to bottom right, rgba(100, 100, 100, 0.25), rgba(100, 100, 100, 0.5));
+  cursor: pointer;
+}
+
+.page-gallery__views-header-item.selected {
+  background: linear-gradient(to bottom right, rgba(100, 100, 100, 0.5), rgba(100, 100, 100, 1));
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
+}
+
+.page-gallery__view {
+  --columns: var(--custom-columns, 4);
+  --gutter-size: var(--custom-gutter-size, 16px);
+  --aspect-ratio: var(--custom-aspect-ratio, 1.618);
+  --image-width: var(--custom-image-width, calc(
+    (var(--fill-line-width, 700px)
+    - (var(--columns) - 1) * var(--gutter-size))
+    / var(--columns)));
+  --image-height: var(--custom-image-height, calc(var(--aspect-ratio) * var(--image-width)));
+  --image-size: var(--custom-image-size, cover);
+  --image-position: var(--custom-image-position, center);
+  --image-repeat: var(--custom-image-repeat, no-repeat);
 }
 
 .page-gallery__group-title {
