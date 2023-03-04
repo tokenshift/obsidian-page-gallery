@@ -4,15 +4,15 @@
   import { setContext } from 'svelte'
   import { writable } from 'svelte/store'
 
+import type { ViewConfig } from '../Config'
+import type Config from '../Config'
+import ExpressionCache from '../ExpressionCache'
+import PageService from '../PageService'
+import PageContentService from '../PageContentService'
+import type PageGalleryPlugin from '../PageGalleryPlugin'
+
   import PageGalleryFilter from './PageGalleryFilter.svelte'
   import PageGalleryView from './PageGalleryView.svelte'
-
-  import type { ViewConfig } from '../Config'
-  import type Config from '../Config'
-  import ExpressionCache from '../ExpressionCache'
-  import PageService from '../PageService'
-  import PageContentService from '../PageContentService'
-  import type PageGalleryPlugin from '../PageGalleryPlugin'
 
   export let plugin: PageGalleryPlugin
   export let component: Component
@@ -69,6 +69,7 @@
       <div class="page-gallery__views-header-item"
         class:selected={index === selectedViewIndex}
         tabindex=0
+        role="button"
         on:click={() => handleSelectView(view, index)}
         on:keypress={() => handleSelectView(view, index)}>
         {view.name}

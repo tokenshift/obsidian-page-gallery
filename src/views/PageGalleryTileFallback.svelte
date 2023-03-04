@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Page } from 'src/ExpressionCache'
+  import type { Page } from '../PageService'
 
   export let page: Page
 </script>

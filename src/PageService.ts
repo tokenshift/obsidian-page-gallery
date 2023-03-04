@@ -28,7 +28,7 @@ export default class PageService {
     filter: string,
     sortBy: string[],
     groupBy: string | null,
-    limit: number
+    limit: number | null
   }) {
     const {
       from,

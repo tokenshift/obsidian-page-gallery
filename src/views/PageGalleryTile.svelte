@@ -3,9 +3,8 @@
 
   import type { ViewConfig } from '../Config'
   import type ExpressionCache from '../ExpressionCache'
-  import type PageService from '../PageService'
   import type { Page } from '../PageService'
-  import type PageContentService from 'src/PageContentService'
+  import type PageContentService from '../PageContentService'
 
   import PageGalleryTileImage from './PageGalleryTileImage.svelte'
   import PageGalleryTileFallback from './PageGalleryTileFallback.svelte'
@@ -14,7 +13,6 @@
   export let view: ViewConfig
 
   const cache = getContext<ExpressionCache>('ExpressionCache')
-  const pageService = getContext<PageService>('PageService')
   const pageContentService = getContext<PageContentService>('PageContentService')
 
   function getFieldValues () {
