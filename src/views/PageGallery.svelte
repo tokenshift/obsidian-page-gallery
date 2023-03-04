@@ -64,15 +64,17 @@
 
   <div class="page-gallery__views">
     {#if config.views.length > 1}
-    <ol class="page-gallery__views-header">
+    <div class="page-gallery__views-header">
       {#each config.views as view, index}
-      <li class:selected={index === selectedViewIndex}
-          on:click={() => handleSelectView(view, index)}
-          on:keypress={() => handleSelectView(view, index)}>
+      <div class="page-gallery__views-header-item"
+        class:selected={index === selectedViewIndex}
+        tabindex=0
+        on:click={() => handleSelectView(view, index)}
+        on:keypress={() => handleSelectView(view, index)}>
         {view.name}
-      </li>
+      </div>
       {/each}
-    </ol>
+    </div>
     {/if}
 
     <PageGalleryView view={selectedView} {filter} bind:refresh={refreshCurrentView} />
