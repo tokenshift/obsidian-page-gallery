@@ -31,9 +31,9 @@
 </script>
 
 <div class="page-gallery__tile"
-  style:--image-size={view.size || null}
-  style:--image-position={view.position || null}
-  style:--image-repeat={view.repeat || null}>
+  style:--image-size={page.pageGallery?.size || null}
+  style:--image-position={page.pageGallery?.position || null}
+  style:--image-repeat={page.pageGallery?.repeat || null}>
   {#await pageContentService.getFirstImageSrc(page)}
   <div class="page-gallery__tile-loading">Loading...</div>
   {:then imageSrc}
