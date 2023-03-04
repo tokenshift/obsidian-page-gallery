@@ -1,6 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+* Multiple views (or tabs) can now be defined using the `views` setting in the
+  page gallery config. The `views` setting is a list of configuration blocks,
+  each accepting largely the same options as the previous root config, plus a
+  `name` option for each tab. Any options defined at the root config will be
+  treated as defaults for every view. If no views are defined, a single implicit
+  one will be created using values defined in the root config object, so if you
+  just want a single-view page gallery (as was previously the only option), you
+  don't have to worry about restructuring all of your `page-gallery` blocks.
+
 ## [0.4.2] - 2023-02-27
+
 ### Fixed
 
 * Parameters/expressions used for `groupBy` and `sortBy` options no longer show
