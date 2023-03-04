@@ -27,14 +27,16 @@ export default class PageService {
     where: string,
     filter: string,
     sortBy: string[],
-    groupBy: string | null
+    groupBy: string | null,
+    limit: number
   }) {
     const {
       from,
       where,
       filter,
       sortBy,
-      groupBy
+      groupBy,
+      limit
     } = options
 
     let pages = from
@@ -52,11 +54,33 @@ export default class PageService {
     const sortFn = this.getSortFn({ sortBy, groupBy })
     const sorted: Page[] = Array.from(pages).sort(sortFn)
 
-    const grouped = this.getGroupedPages(groupBy, sorted)
+    const groups = this.getGroupedPages(groupBy, sorted)
 
-    // TODO: Truncate (limit)
+    if (limit && limit > -1) {
+      const truncated = []
+      let count = 0
 
-    return grouped
+      for (const group of groups) {
+        if (count + group.pages.length <= limit) {
+          truncated.push(group)
+          count += group.pages.length
+        } else if (count < limit) {
+          const truncatedGroup = {
+            ...group,
+            pages: group.pages.slice(0, limit - count)
+          }
+
+          truncated.push(truncatedGroup)
+          break
+        } else {
+          break
+        }
+      }
+
+      return truncated
+    } else {
+      return groups
+    }
   }
 
   matchFilter (filter: string, page: Page): boolean {
