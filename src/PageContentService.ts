@@ -1,11 +1,11 @@
 import mime from 'mime'
-import NodeCache from 'node-cache'
+// import NodeCache from 'node-cache'
 import { Component, MarkdownPreviewView, TFile } from 'obsidian'
 
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import type { Page } from './PageService'
 
-const CACHE_TTL = 60
+// const CACHE_TTL = 60
 
 export const IMG_MIME_TYPES = [
   'image/jpeg',
@@ -27,16 +27,16 @@ export default class PageContentService {
     this.component = options.component
   }
 
-  _contentCache = new NodeCache({ stdTTL: CACHE_TTL })
+  // _contentCache = new NodeCache({ stdTTL: CACHE_TTL })
   async getContent (page: Page): Promise<string | null> {
-    const cacheKey = JSON.stringify([
-      page.file.path,
-      page.file.mtime,
-      page.file.size
-    ])
+    // const cacheKey = JSON.stringify([
+    //   page.file.path,
+    //   page.file.mtime,
+    //   page.file.size
+    // ])
 
-    const cached = this._contentCache.get<string | null>(cacheKey)
-    if (cached !== undefined) { return cached }
+    // const cached = this._contentCache.get<string | null>(cacheKey)
+    // if (cached !== undefined) { return cached }
 
     const file = this.plugin.app.vault.getAbstractFileByPath(page.file.path)
 
@@ -46,7 +46,7 @@ export default class PageContentService {
 
     const content = await this.plugin.app.vault.cachedRead(file as TFile)
 
-    this._contentCache.set(cacheKey, content)
+    // this._contentCache.set(cacheKey, content)
     return content
   }
 
@@ -66,20 +66,20 @@ export default class PageContentService {
     return rendered
   }
 
-  _firstImageSrcCache = new NodeCache({ stdTTL: CACHE_TTL })
+  // _firstImageSrcCache = new NodeCache({ stdTTL: CACHE_TTL })
   async getFirstImageSrc (page: Page): Promise<string | null> {
-    const cacheKey = JSON.stringify([
-      page.file.path,
-      page.file.mtime,
-      page.file.size
-    ])
+    // const cacheKey = JSON.stringify([
+    //   page.file.path,
+    //   page.file.mtime,
+    //   page.file.size
+    // ])
 
-    const cached = this._firstImageSrcCache.get<string | null>(cacheKey)
-    if (cached !== undefined) { return cached }
+    // const cached = this._firstImageSrcCache.get<string | null>(cacheKey)
+    // if (cached !== undefined) { return cached }
 
     const rendered = await this.getRenderedContent(page)
     if (!rendered) {
-      this._firstImageSrcCache.set(cacheKey, null)
+      // this._firstImageSrcCache.set(cacheKey, null)
       return null
     }
 
@@ -102,11 +102,11 @@ export default class PageContentService {
 
       const path = this.plugin.app.vault.getResourcePath(file)
 
-      this._firstImageSrcCache.set(cacheKey, path)
+      // this._firstImageSrcCache.set(cacheKey, path)
       return path
     }
 
-    this._firstImageSrcCache.set(cacheKey, null)
+    // this._firstImageSrcCache.set(cacheKey, null)
     return null
   }
 }
