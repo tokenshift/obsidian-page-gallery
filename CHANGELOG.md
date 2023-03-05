@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.1] - 2023-03-05
+
+### Modified
+
+* Replaced `node-cache` with custom LRU-based cache for mobile compatibility.
+
 ## [0.5.0] - 2023-03-03
 
 ### Added
