@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2] - 2023-03-05
+
+### Fixed
+
+* Fields with zero-values (`0`) are no longer treated as missing/null, and will
+  sort correctly with other numbers.
+
 ## [0.5.1] - 2023-03-05
 
 ### Modified

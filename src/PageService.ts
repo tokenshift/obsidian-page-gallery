@@ -144,13 +144,13 @@ export default class PageService {
         const aval = this.cache.evaluate(field, a),
               bval = this.cache.evaluate(field, b)
 
-        if (aval && bval) {
+        if (aval != null && bval != null) {
           if (aval < bval) { return reverse ? 1 : -1 }
           else if (aval > bval) { return reverse ? -1 : 1 }
-        } else if (aval) {
+        } else if (aval != null) {
           // Defined before undefined
           return reverse ? 1 : -1
-        } else if (bval) {
+        } else if (bval != null) {
           // Defined before undefined
           return reverse ? -1 : 1
         }

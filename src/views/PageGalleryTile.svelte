@@ -16,17 +16,12 @@
   const pageContentService = getContext<PageContentService>('PageContentService')
 
   function getFieldValues () {
-    return Promise.all(view.fields
+    return view.fields
       .map(expression => ({
         expression,
         value: cache.evaluate(expression, page)
       }))
-      .filter(field => field.value)
-      .map(async ({ expression, value }) => ({
-        expression,
-        value,
-        rendered: await cache.renderFieldValue(expression, page)
-      })))
+      .filter(field => field.value != null)
   }
 </script>
 
@@ -48,15 +43,21 @@
   {#if fields.length > 0}
   <div class="page-gallery__fields">
     {#each fields as field}
+    {#if typeof field.value === 'object'}
+    {#await cache.renderFieldValue(field.expression, page) then rendered}
     <div class="page-gallery__field"
       data-page-gallery-field-expression={field.expression}
       data-page-gallery-field-value={field.value}>
-      {#if field.expression !== 'file.name'}
-      {@html field.rendered}
-      {:else}
-      {field.value}
-      {/if}
+      {@html rendered}
     </div>
+    {/await}
+    {:else}
+    <div class="page-gallery__field"
+      data-page-gallery-field-expression={field.expression}
+      data-page-gallery-field-value={field.value}>
+      {field.value}
+    </div>
+    {/if}
     {/each}
   </div>
   {/if}
