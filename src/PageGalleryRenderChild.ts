@@ -37,14 +37,33 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
 
     super(element)
 
+    this.sourcePath = sourcePath
     this.plugin = plugin
     this.api = api
-    this.parentPage = api.page(sourcePath) as Record<string, any>
     this.config = config
   }
 
   refresh = debounce(async () => {
     try {
+      if (!this.parentPage) {
+        this.parentPage = this.api.page(this.sourcePath) as Record<string, any>
+      }
+
+      if (!this.parentPage) { return }
+
+      if (!this.root) {
+        this.root = new PageGallery({
+          target: this.containerEl,
+          props: {
+            plugin: this.plugin,
+            component: this,
+            api: this.api,
+            config: this.config,
+            parentPage: this.parentPage
+          }
+        })
+      }
+
       this.root.refresh()
     } catch (err) {
       console.error(err)
@@ -52,17 +71,6 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
   }, DEBOUNCE_RENDER_TIME, true)
 
   async onload () {
-    this.root = new PageGallery({
-      target: this.containerEl,
-      props: {
-        plugin: this.plugin,
-        component: this,
-        api: this.api,
-        config: this.config,
-        parentPage: this.parentPage
-      }
-    })
-
     this.registerEvent(this.plugin.app.metadataCache.on('dataview:metadata-change' as 'resolved', () => {
       this.refresh()
     }))
@@ -70,5 +78,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     this.registerEvent(this.plugin.app.metadataCache.on('dataview:index-ready' as 'resolved', () => {
       this.refresh()
     }))
+
+    this.refresh()
   }
 }

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3] - 2023-03-06
+
+### Fixed
+
+* Page galleries weren't displaying right on first load of Obsidian because they
+  were trying to display before obsidian-dataview had initialized its index.
+
 ## [0.5.2] - 2023-03-05
 
 ### Fixed

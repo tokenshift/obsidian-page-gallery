@@ -1,7 +1,7 @@
 {
 	"id": "page-gallery",
 	"name": "Page Gallery",
-	"version": "0.5.2",
+	"version": "0.5.3",
 	"minAppVersion": "0.15.0",
 	"description": "Creates an embeddable gallery based on selected page contents.",
 	"author": "Nathan Clark",
