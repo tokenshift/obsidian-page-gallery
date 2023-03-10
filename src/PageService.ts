@@ -125,12 +125,8 @@ export default class PageService {
     return (a: Page, b: Page): -1 | 0 | 1 => {
       // Sort by `groupBy` first...
       if (groupBy) {
-        // TODO: I don't think this will work if the evaluation result is an
-        // object rather than a string or number (e.g. if it's a link). Might
-        // need to render it in order to get something sortable? Except
-        // rendering is asynchronous...
-        const aval = this.cache.evaluate(groupBy, a),
-              bval = this.cache.evaluate(groupBy, b)
+        const aval = comparableExpressionValue(this.cache.evaluate(groupBy, a)),
+              bval = comparableExpressionValue(this.cache.evaluate(groupBy, b))
 
         if (aval && bval) {
           if (aval < bval) { return -1 }

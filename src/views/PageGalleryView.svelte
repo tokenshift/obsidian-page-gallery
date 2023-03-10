@@ -34,7 +34,6 @@
   <div class="page-gallery__group">
     {#if group.value}
     <header class="page-gallery__group-title">
-      <!-- <pre>{JSON.stringify(group.value)}</pre> -->
       {#if cache.appearsRenderable(group.value)}
       {#await cache.renderFieldValue(group.value) then rendered}
       {@html rendered}
