@@ -22,7 +22,7 @@ export default class ExpressionCache {
   appearsRenderable (value: any) {
     if (value === null) { return false }
     if (typeof value === 'object') { return true }
-    if (typeof value === 'string' && new RegExp('^#[0-9a-z\-_/]+', 'i').exec(value)) { return true }
+    if (typeof value === 'string' && new RegExp('^#[0-9a-z-_/]+', 'i').exec(value)) { return true }
     return false
   }
 

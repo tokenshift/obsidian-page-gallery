@@ -3,7 +3,7 @@
   import type { Readable } from 'svelte/store'
 
   import type { ViewConfig } from '../Config'
-  import ExpressionCache from '../ExpressionCache'
+  import type ExpressionCache from '../ExpressionCache'
   import type PageService from '../PageService'
   import PageGalleryTile from './PageGalleryTile.svelte'
 
