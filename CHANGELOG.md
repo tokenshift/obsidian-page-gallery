@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unrelease]
+
+### Fixed
+
+* `groupBy` option now behaves correctly when the group by value is a link to
+  a page.
+
 ## [0.5.3] - 2023-03-06
 
 ### Fixed

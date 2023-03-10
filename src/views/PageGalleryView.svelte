@@ -11,9 +11,7 @@
 
   const pageService = getContext<PageService>('PageService')
 
-  export function refresh () {
-    view = view
-  }
+  export function refresh () { view = view }
 </script>
 
 {#await pageService.getPageGroups({ ...view, filter: $filter } )}

@@ -124,6 +124,10 @@ export default class PageService {
     return (a: Page, b: Page): -1 | 0 | 1 => {
       // Sort by `groupBy` first...
       if (groupBy) {
+        // TODO: I don't think this will work if the evaluation result is an
+        // object rather than a string or number (e.g. if it's a link). Might
+        // need to render it in order to get something sortable? Except
+        // rendering is asynchronous...
         const aval = this.cache.evaluate(groupBy, a),
               bval = this.cache.evaluate(groupBy, b)
 
@@ -170,7 +174,9 @@ export default class PageService {
         ? this.cache.evaluate<string>(groupBy, page)
         : null
 
-      if (currentGroup === null || group !== currentGroup.name) {
+      const groupName = comparableExpressionValue(group)
+
+      if (currentGroup === null || groupName != comparableExpressionValue(currentGroup.name)) {
         currentGroup = {
           name: group,
           pages: [page]
@@ -183,5 +189,22 @@ export default class PageService {
     }
 
     return groups
+  }
+}
+
+/** Given the result of evaluating an obsidian-dataview expression, returns
+ * a value that's sortable/comparable. For primitive values (strings, numbers,
+ * etc), it just returns the value as-is, while for objects, it attempts to
+ * convert them to a comparable primitive value, usually by using one or more
+ * of its fields.
+ */
+function comparableExpressionValue (value: any) {
+  if (typeof value !== 'object' || value === null) { return value }
+  else if (value.hasOwnProperty('path')) {
+    // Links
+    return value.path
+  } else {
+    // Fallback/default; render the value as JSON.
+    return JSON.stringify(value)
   }
 }
