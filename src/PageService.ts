@@ -5,7 +5,8 @@ import type ExpressionCache from './ExpressionCache'
 export type Page = Record<string, any>
 
 export type PageGroup = {
-  name: string | null
+  value: any
+  comparable: any
   href?: string
   pages: Page[]
 }
@@ -170,15 +171,18 @@ export default class PageService {
     let currentGroup: PageGroup | null = null
 
     for (const page of pages) {
-      const group = groupBy
+      const groupValue = groupBy
         ? this.cache.evaluate<string>(groupBy, page)
         : null
 
-      const groupName = comparableExpressionValue(group)
+      const groupComparable = groupValue === null
+        ? null
+        : comparableExpressionValue(groupValue)
 
-      if (currentGroup === null || groupName != comparableExpressionValue(currentGroup.name)) {
+      if (currentGroup === null || groupComparable != currentGroup.comparable) {
         currentGroup = {
-          name: group,
+          value: groupValue,
+          comparable: groupComparable,
           pages: [page]
         }
 

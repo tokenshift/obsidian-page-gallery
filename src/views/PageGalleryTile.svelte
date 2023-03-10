@@ -43,8 +43,8 @@
   {#if fields.length > 0}
   <div class="page-gallery__fields">
     {#each fields as field}
-    {#if typeof field.value === 'object'}
-    {#await cache.renderFieldValue(field.expression, page) then rendered}
+    {#if cache.appearsRenderable(field.value)}
+    {#await cache.renderExpression(field.expression, page) then rendered}
     <div class="page-gallery__field"
       data-page-gallery-field-expression={field.expression}
       data-page-gallery-field-value={field.value}>

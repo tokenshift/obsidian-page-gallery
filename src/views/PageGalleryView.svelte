@@ -3,12 +3,14 @@
   import type { Readable } from 'svelte/store'
 
   import type { ViewConfig } from '../Config'
+  import ExpressionCache from '../ExpressionCache'
   import type PageService from '../PageService'
   import PageGalleryTile from './PageGalleryTile.svelte'
 
   export let view: ViewConfig
   export let filter: Readable<string>
 
+  const cache = getContext<ExpressionCache>('ExpressionCache')
   const pageService = getContext<PageService>('PageService')
 
   export function refresh () { view = view }
@@ -30,9 +32,16 @@
   style:--custom-image-repeat={view.repeat || null}>
   {#each groups as group}
   <div class="page-gallery__group">
-    {#if group.name}
+    {#if group.value}
     <header class="page-gallery__group-title">
-      {@html group.name}
+      <!-- <pre>{JSON.stringify(group.value)}</pre> -->
+      {#if cache.appearsRenderable(group.value)}
+      {#await cache.renderFieldValue(group.value) then rendered}
+      {@html rendered}
+      {/await}
+      {:else}
+      {group.value}
+      {/if}
     </header>
     {:else if groups.length > 1}
     <header class="page-gallery__group-title page-gallery__group-title--fallback">

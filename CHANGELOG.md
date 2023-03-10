@@ -1,11 +1,14 @@
 # Changelog
 
-## [Unrelease]
+## [Unreleased]
 
 ### Fixed
 
 * `groupBy` option now behaves correctly when the group by value is a link to
   a page.
+* `groupBy` values are now rendered as markdown in certain cases, including
+  links and tags.
+* Single tags as field values are now rendered correctly.
 
 ## [0.5.3] - 2023-03-06
 
