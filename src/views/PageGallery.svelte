@@ -51,7 +51,7 @@ import type PageGalleryPlugin from '../PageGalleryPlugin'
   bind:clientWidth={clientWidth}
   style:--page-gallery-width={`${clientWidth}px`}>
   {#if config.title}
-  <header class="page-gallery__title">{config.title}</header>
+  <header class="page-gallery__title"><h2>{config.title}</h2></header>
   {/if}
 
   {#if config.debug}

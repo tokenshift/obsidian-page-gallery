@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Modified
+
+* Page gallery title and group headings now us `<h2>` and `<h3>` elements to
+  match configured page styles, rather than custom styling.
+
 ## [0.5.4] - 2023-03-10
 
 ### Fixed

@@ -34,17 +34,19 @@
   <div class="page-gallery__group">
     {#if group.value}
     <header class="page-gallery__group-title">
-      {#if cache.appearsRenderable(group.value)}
-      {#await cache.renderFieldValue(group.value) then rendered}
-      {@html rendered}
-      {/await}
-      {:else}
-      {group.value}
-      {/if}
+      <h3>
+        {#if cache.appearsRenderable(group.value)}
+        {#await cache.renderFieldValue(group.value) then rendered}
+        {@html rendered}
+        {/await}
+        {:else}
+        {group.value}
+        {/if}
+      </h3>
     </header>
     {:else if groups.length > 1}
     <header class="page-gallery__group-title page-gallery__group-title--fallback">
-      Other
+      <h3>Other</h3>
     </header>
     {/if}
 
