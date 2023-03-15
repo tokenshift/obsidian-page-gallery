@@ -25,6 +25,7 @@
   style:--custom-columns={view.columns || null}
   style:--custom-gutter-size={view.gutterSize || null}
   style:--custom-aspect-ratio={view.aspectRatio || null}
+  style:--custom-border-radius={view.radius || null}
   style:--custom-image-height={view.height || null}
   style:--custom-image-width={view.width || null}
   style:--custom-image-size={view.size || null}

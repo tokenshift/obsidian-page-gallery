@@ -44,6 +44,7 @@ export class ViewConfig {
     columns: number | null
     gutterSize: string | null
     orientation: string | null
+    radius: string | null
     height: string |  null
     width: string | null
 
@@ -85,6 +86,7 @@ export class ViewConfig {
     this.columns = options.columns
     this.gutterSize = options.gutterSize
     this.orientation = options.orientation
+    this.radius = options.radius
     this.height = options.height
     this.width = options.width
 

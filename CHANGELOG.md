@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added
+
+* New `radius` option to change the border radius of individual tiles, if you
+  don't want rounded corners (or want them to be bigger/smaller).
+
 ### Modified
 
 * Page gallery title and group headings now us `<h2>` and `<h3>` elements to
