@@ -108,7 +108,7 @@
   display: flex;
   flex-direction: column;
   height: var(--image-height);
-  overflow: hidden;
+  overflow: auto;
   padding: 0.5em;
   text-decoration: none !important;
 }
