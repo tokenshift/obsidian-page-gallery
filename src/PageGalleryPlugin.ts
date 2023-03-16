@@ -57,6 +57,7 @@ export default class PageGalleryPlugin extends Plugin {
       const pre = document.createElement('pre')
       pre.append(err.message)
       if (err.stack) {
+        pre.append('\n')
         pre.append(err.stack)
       }
       el.append(pre)
