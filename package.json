@@ -25,7 +25,7 @@
     "eslint": "^8.21.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "obsidian": "latest",
-    "obsidian-dataview": "^0.5.51",
+    "obsidian-dataview": "^0.5.55",
     "svelte": "^3.49.0",
     "svelte-check": "^2.8.0",
     "svelte-preprocess": "^4.10.7",
@@ -36,7 +36,7 @@
   "dependencies": {
     "mime": "^3.0.0",
     "object-path": "^0.11.8",
-    "ts-deepmerge": "^5.0.0",
+    "ts-deepmerge": "^6.0.3",
     "ulid": "^2.3.0",
     "validate.js": "^0.13.1"
   }

@@ -113,9 +113,6 @@ export default class PageContentService {
 
         const imageSrc = this.plugin.app.vault.getResourcePath(file)
 
-        // <span alt="op23-vKUxm7uqkKw-unsplash.jpg" src="op23-vKUxm7uqkKw-unsplash.jpg" class="internal-embed media-embed image-embed is-loaded">
-        // <img alt="op23-vKUxm7uqkKw-unsplash.jpg" src="app://local/C:/Users/token/OneDrive/Desktop/Gallery%20Test/Test%20Gallery/attachments/op23-vKUxm7uqkKw-unsplash.jpg?1667157589632">
-        // </span>
         el.innerHTML = ''
         const img = document.createElement('img')
         img.setAttribute('alt', el.getAttribute('alt') || '')
