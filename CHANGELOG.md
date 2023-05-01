@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.2] - 2023-05-01
+
+### Fixed
+
+* Resolved issue with dirnames on mobile devices.
+
 ## [0.6.1] - 2023-05-01
 
 ### Fixed
