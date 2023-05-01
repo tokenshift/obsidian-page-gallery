@@ -4,7 +4,6 @@ import { Component, MarkdownPreviewView, TFile } from 'obsidian'
 import LRUCache from './LRUCache'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import type { Page } from './PageService'
-import path from 'path'
 
 export const IMG_MIME_TYPES = [
   'image/jpeg',
@@ -136,7 +135,7 @@ export default class PageContentService {
   getClosestMatchingImageSrc (src: string, page: Page): TFile | null {
     src = src.normalize()
 
-    const dirname = path.dirname(page.file.path)
+    const dirname = page.file.path.match(/^(.*)(\/.*?)/)[1]
     const matching = this.plugin.app.vault.getFiles().filter(f => f.path.normalize().endsWith(src))
 
     matching.sort((a, b) => {
