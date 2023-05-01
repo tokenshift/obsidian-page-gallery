@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+* New `mode` option to choose whether you want to display images, note content,
+  or images with note content as a fallback if no image is detected (the new
+  default).
+
 ## [0.5.5] - 2023-03-15
 
 ### Added

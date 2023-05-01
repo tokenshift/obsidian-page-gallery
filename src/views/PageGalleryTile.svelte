@@ -4,16 +4,13 @@
   import type { ViewConfig } from '../Config'
   import type ExpressionCache from '../ExpressionCache'
   import type { Page } from '../PageService'
-  import type PageContentService from '../PageContentService'
 
   import PageGalleryTileImage from './PageGalleryTileImage.svelte'
-  import PageGalleryTileFallback from './PageGalleryTileFallback.svelte'
 
   export let page: Page
   export let view: ViewConfig
 
   const cache = getContext<ExpressionCache>('ExpressionCache')
-  const pageContentService = getContext<PageContentService>('PageContentService')
 
   function getFieldValues () {
     return view.fields
@@ -29,15 +26,7 @@
   style:--image-size={page.pageGallery?.size || null}
   style:--image-position={page.pageGallery?.position || null}
   style:--image-repeat={page.pageGallery?.repeat || null}>
-  {#await pageContentService.getFirstImageSrc(page)}
-  <div class="page-gallery__tile-loading">Loading...</div>
-  {:then imageSrc}
-    {#if imageSrc}
-    <PageGalleryTileImage {page} {imageSrc} />
-    {:else}
-    <PageGalleryTileFallback {page} />
-    {/if}
-  {/await}
+  <PageGalleryTileImage {page} {view} />
 
   {#await getFieldValues() then fields}
   {#if fields.length > 0}

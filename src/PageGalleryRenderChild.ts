@@ -7,7 +7,7 @@ import type Config from './Config'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import PageGallery from './views/PageGallery.svelte'
 
-const DEBOUNCE_RENDER_TIME = 100
+const DEBOUNCE_RENDER_TIME = 500
 
 export type PageGalleryRenderChildOptions = {
   sourcePath: string

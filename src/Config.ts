@@ -3,6 +3,7 @@ import merge from 'ts-deepmerge'
 import validate from 'validate.js'
 
 export const DEFAULT_VIEW_CONFIG = {
+  mode: 'auto',
   fields: [],
   limit: 100,
   filter: true,
@@ -22,9 +23,17 @@ export const VIEW_CONFIG_SCHEMA = {
   filter: { type: 'boolean' },
   columns: { type: 'number' },
   gutterSize: { type: 'string' },
-  orientation: { type: 'string', inclusion: ['portrait', 'landscape'] },
+  orientation: { type: 'string', inclusion: {
+    within: ['portrait', 'landscape'],
+    message: 'must be "portrait" (default) or "landscape"'
+  } },
+  radius: { type: 'string' },
   height: { type: 'string' },
   width: { type: 'string' },
+  mode: { type: 'string', inclusion: {
+    within: ['auto', 'content', 'image'],
+    message: 'must be "auto" (default), "content", or "image"'
+  } },
   size: { type: 'string' },
   position: { type: 'string' },
   repeat: { type: 'string' }
@@ -32,6 +41,7 @@ export const VIEW_CONFIG_SCHEMA = {
 
 export class ViewConfig {
     name: string
+    mode: string
 
     from: string
     where: string
@@ -63,7 +73,7 @@ export class ViewConfig {
       }
     }
 
-    const errors = validate(options, VIEW_CONFIG_SCHEMA)
+    const errors = validate(options, VIEW_CONFIG_SCHEMA, { format: 'flat' })
 
     if (errors) {
       throw new Error(`Invalid config: ${errors}`)
@@ -72,6 +82,7 @@ export class ViewConfig {
     this.name = options.name
       ? options.name.trim()
       : null
+    this.mode = options.mode
 
     this.from = options.from.trim().replace(/[\n\r]+/g, ' ')
     this.where = options.where
