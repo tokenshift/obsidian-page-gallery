@@ -1,10 +1,10 @@
 import mime from 'mime'
-import { Component, MarkdownPreviewView, MarkdownRenderer, TFile } from 'obsidian'
+import { Component, MarkdownPreviewView, TFile } from 'obsidian'
 
 import LRUCache from './LRUCache'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import type { Page } from './PageService'
-
+import path from 'path'
 
 export const IMG_MIME_TYPES = [
   'image/jpeg',
@@ -108,7 +108,7 @@ export default class PageContentService {
         const mimeType = mime.getType(ext)
         if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
 
-        const file = this.plugin.app.vault.getFiles().find(f => f.path.endsWith(src))
+        const file = this.getClosestMatchingImageSrc(src, page)
         if (!file) { continue }
 
         const imageSrc = this.plugin.app.vault.getResourcePath(file)
@@ -122,6 +122,46 @@ export default class PageContentService {
 
       return rendered
     }) as Promise<HTMLElement | null>
+  }
+
+  /** Attempts to find the *right* matching image, in the event that there's
+   * multiple matching the `src`, by picking the "closest".
+   *
+   * No idea if this is how Obsidian figures out what image to use. I can't find
+   * anything exposed in the Obsidian API that does this correctly, though.
+   *
+   * TODO: See if I can figure out how Obsidian actually picks an image when a
+   * link like `![[example.png]]` matches multiple files.
+   */
+  getClosestMatchingImageSrc (src: string, page: Page): TFile | null {
+    src = src.normalize()
+
+    const dirname = path.dirname(page.file.path)
+    const matching = this.plugin.app.vault.getFiles().filter(f => f.path.normalize().endsWith(src))
+
+    matching.sort((a, b) => {
+      // Sort files that are descendants (or siblings) of the current page's folder first,
+      // then by standard string comparison on their absolute paths.
+      if (a.path.startsWith(dirname)) {
+        if (b.path.startsWith(dirname)) {
+          return a < b ? -1 :1
+        } else {
+          return -1
+        }
+      } else {
+        if (b.path.startsWith(dirname)) {
+          return 1
+        } else {
+          return a < b ? -1 : 1
+        }
+      }
+    })
+
+    if (matching.length > 0) {
+      return matching[0]
+    } else {
+      return null
+    }
   }
 
   async getFirstImageSrc (page: Page): Promise<string | null> {
@@ -152,7 +192,7 @@ export default class PageContentService {
         const mimeType = mime.getType(ext)
         if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
 
-        const file = this.plugin.app.vault.getFiles().find(f => f.path.endsWith(src))
+        const file = this.getClosestMatchingImageSrc(src, page)
         if (!file) { continue }
 
         return this.plugin.app.vault.getResourcePath(file)
