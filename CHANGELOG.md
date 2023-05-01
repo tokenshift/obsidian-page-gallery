@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+* Links in string field values are now rendered properly.
+
 ## [0.6.0] - 2023-05-01
 
 ### Added

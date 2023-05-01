@@ -20,9 +20,19 @@ export default class ExpressionCache {
    * rendered.
    */
   appearsRenderable (value: any) {
+    const renderableStringPatterns = [
+      /^#[0-9a-z-_/]+/i,
+      /\[\[.*\]\]/,
+      /\[.*\]\(.*\)/
+    ]
+
     if (value === null) { return false }
     if (typeof value === 'object') { return true }
-    if (typeof value === 'string' && new RegExp('^#[0-9a-z-_/]+', 'i').exec(value)) { return true }
+    if (typeof value === 'string') {
+      if (renderableStringPatterns.find(p => p.exec(value))) {
+        return true
+      }
+    }
     return false
   }
 
