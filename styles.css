@@ -101,6 +101,10 @@
   opacity: 1.0;
 }
 
+.page-gallery__tile--loading {
+  height: var(--image-height);
+}
+
 .page-gallery__tile-image--content {
   background: linear-gradient(to bottom right, rgba(100, 100, 100, 0.25), rgba(100, 100, 100, 0.5));
   border-radius: var(--border-radius, 10px);
