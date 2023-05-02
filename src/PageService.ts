@@ -123,6 +123,9 @@ export default class PageService {
         : { field, reverse: false })
 
     return (a: Page, b: Page): -1 | 0 | 1 => {
+      // TODO: This function is really slow--and happens pre-pagination/lazy-
+      // loading, so it really needs to be optimized.
+
       // Sort by `groupBy` first...
       if (groupBy) {
         const aval = comparableExpressionValue(this.cache.evaluate(groupBy, a)),

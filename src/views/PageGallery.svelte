@@ -1,15 +1,15 @@
 <script lang="ts">
-  import type { Component } from 'obsidian'
+  import { debounce, type Component } from 'obsidian'
   import type { DataviewApi } from 'obsidian-dataview'
   import { setContext } from 'svelte'
   import { writable } from 'svelte/store'
 
-import type { ViewConfig } from '../Config'
-import type Config from '../Config'
-import ExpressionCache from '../ExpressionCache'
-import PageService from '../PageService'
-import PageContentService from '../PageContentService'
-import type PageGalleryPlugin from '../PageGalleryPlugin'
+  import type { ViewConfig } from '../Config'
+  import type Config from '../Config'
+  import ExpressionCache from '../ExpressionCache'
+  import PageService from '../PageService'
+  import PageContentService from '../PageContentService'
+  import type PageGalleryPlugin from '../PageGalleryPlugin'
 
   import PageGalleryFilter from './PageGalleryFilter.svelte'
   import PageGalleryView from './PageGalleryView.svelte'
@@ -35,8 +35,9 @@ import type PageGalleryPlugin from '../PageGalleryPlugin'
   setContext('PageService', pageService)
   setContext('PageContentService', pageContentService)
 
-  let clientWidth: number
   let filter = writable<string>('')
+  let debouncedFilter = writable<string>('')
+  filter.subscribe(debounce(debouncedFilter.set, 250))
 
   let selectedViewIndex: number = 0
   let selectedView = config.views[selectedViewIndex]
@@ -47,9 +48,7 @@ import type PageGalleryPlugin from '../PageGalleryPlugin'
   }
 </script>
 
-<div class="page-gallery"
-  bind:clientWidth={clientWidth}
-  style:--page-gallery-width={`${clientWidth}px`}>
+<div class="page-gallery">
   {#if config.title}
   <header class="page-gallery__title"><h2>{config.title}</h2></header>
   {/if}
@@ -78,6 +77,6 @@ import type PageGalleryPlugin from '../PageGalleryPlugin'
     </div>
     {/if}
 
-    <PageGalleryView view={selectedView} {filter} bind:refresh={refreshCurrentView} />
+    <PageGalleryView view={selectedView} filter={debouncedFilter} bind:refresh={refreshCurrentView} />
   </div>
 </div>

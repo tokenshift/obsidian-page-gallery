@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Modified
+
+* Tile images and field values are now lazy-loaded when the tile is visible.
+  This dramatically increases performance on large page galleries.
+* Updates to the filter string are now debounced to keep the UI from freezing
+  up repeatedly as you type.
+
 ## [0.6.2] - 2023-05-01
 
 ### Fixed

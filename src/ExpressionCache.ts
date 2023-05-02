@@ -1,5 +1,6 @@
 import type { Component } from 'obsidian'
 import type { DataviewApi } from 'obsidian-dataview'
+
 import LRUCache from './LRUCache'
 import type { Page } from './PageService'
 
