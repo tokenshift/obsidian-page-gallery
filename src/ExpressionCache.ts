@@ -9,8 +9,6 @@ export default class ExpressionCache {
   api: DataviewApi
   parentPage: Page
 
-  _cache = new LRUCache<any>()
-
   constructor (options: { component: Component, api: DataviewApi, parentPage: Page }) {
     this.component = options.component
     this.api = options.api
@@ -37,6 +35,7 @@ export default class ExpressionCache {
     return false
   }
 
+  _evaluateCache = new LRUCache<any>()
   evaluate<TResult> (expression: string, page: Page | null = null) {
     const cacheKey = JSON.stringify({
       parent: {
@@ -49,11 +48,10 @@ export default class ExpressionCache {
         mtime: page?.file.mtime.toMillis(),
         size: page?.file.size
       },
-      expression,
-      operation: 'evaluate'
+      expression
     })
 
-    return this._cache.fetch(cacheKey, () => {
+    return this._evaluateCache.fetch(cacheKey, () => {
       const result = this.api.evaluate(expression, {
         ...page,
         this: this.parentPage
@@ -67,6 +65,7 @@ export default class ExpressionCache {
     })
   }
 
+  _renderExpressionCache = new LRUCache<Promise<string | null>>()
   async renderExpression (expression: string, page: Page | null = null): Promise<string | null> {
     const cacheKey = JSON.stringify({
       parent: {
@@ -79,11 +78,10 @@ export default class ExpressionCache {
         mtime: page?.file.mtime.toMillis(),
         size: page?.file.size
       },
-      expression,
-      operation: 'renderExpression'
+      expression
     })
 
-    return this._cache.fetch(cacheKey, async () => {
+    return this._renderExpressionCache.fetch(cacheKey, async () => {
       const value = this.evaluate(expression, page)
       if (!value) { return null }
 
@@ -91,6 +89,7 @@ export default class ExpressionCache {
     })
   }
 
+  _renderFieldValueCache = new LRUCache<Promise<string | null>>()
   async renderFieldValue (value: any, page: Page | null = null): Promise<string | null> {
     const cacheKey = JSON.stringify({
       parent: {
@@ -103,11 +102,10 @@ export default class ExpressionCache {
         mtime: page?.file.mtime.toMillis(),
         size: page?.file.size
       },
-      value,
-      operation: 'renderFieldValue'
+      value
     })
 
-    return this._cache.fetch(cacheKey, async () => {
+    return this._renderFieldValueCache.fetch(cacheKey, async () => {
       if (!value) { return null }
 
       const temp = document.createElement('div')
