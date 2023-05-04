@@ -52,7 +52,7 @@ export default class PageService {
       pages = pages.filter(p => this.matchFilter(filter, p))
     }
 
-    const sortFn = this.getSortFn({ sortBy, groupBy })
+    const sortFn = this.getSortFn({ sortBy })
     const sorted: Page[] = Array.from(pages).sort(sortFn)
 
     const groups = this.getGroupedPages(groupBy, sorted)
@@ -109,13 +109,8 @@ export default class PageService {
   }
 
   getSortFn (options: {
-    sortBy: string[],
-    groupBy: string | null
+    sortBy: string[]
   }) {
-    const {
-      groupBy
-    } = options
-
     const sortBy = options.sortBy
       .map(field => field.trim().toLowerCase())
       .map(field => field.startsWith('-')
@@ -123,27 +118,6 @@ export default class PageService {
         : { field, reverse: false })
 
     return (a: Page, b: Page): -1 | 0 | 1 => {
-      // TODO: This function is really slow--and happens pre-pagination/lazy-
-      // loading, so it really needs to be optimized.
-
-      // Sort by `groupBy` first...
-      if (groupBy) {
-        const aval = comparableExpressionValue(this.cache.evaluate(groupBy, a)),
-              bval = comparableExpressionValue(this.cache.evaluate(groupBy, b))
-
-        if (aval && bval) {
-          if (aval < bval) { return -1 }
-          else if (aval > bval) { return 1 }
-        } else if (aval) {
-          // List pages w/ group-by values first (i.e. where the group-by field
-          // isn't null/missing)
-          return -1
-        } else if (bval) {
-          return 1
-        }
-      }
-
-      // ...then by `sortBy` fields.
       for (const { field, reverse } of sortBy) {
         const aval = this.cache.evaluate(field, a),
               bval = this.cache.evaluate(field, b)
@@ -166,8 +140,7 @@ export default class PageService {
   }
 
   getGroupedPages (groupBy: string | null, pages: Page[]): PageGroup[] {
-    const groups: PageGroup[] = []
-    let currentGroup: PageGroup | null = null
+    const groups: Record<string, PageGroup> = {}
 
     for (const page of pages) {
       const groupValue = groupBy
@@ -175,23 +148,26 @@ export default class PageService {
         : null
 
       const groupComparable = groupValue === null
-        ? null
+        ? ''
         : comparableExpressionValue(groupValue)
 
-      if (currentGroup === null || groupComparable != currentGroup.comparable) {
-        currentGroup = {
+      if (groupComparable in groups) {
+        groups[groupComparable].pages.push(page)
+      } else {
+        groups[groupComparable] = {
           value: groupValue,
           comparable: groupComparable,
           pages: [page]
         }
-
-        groups.push(currentGroup)
-      } else {
-        currentGroup.pages.push(page)
       }
     }
 
-    return groups
+    return Object.values(groups).sort(({ comparable: a}, { comparable: b }) => {
+      if (a === '') { return 1 }
+      else if (b === '') { return -1 }
+      else if (a < b) { return -1 }
+      else { return +1 }
+    })
   }
 }
 
@@ -201,11 +177,11 @@ export default class PageService {
  * convert them to a comparable primitive value, usually by using one or more
  * of its fields.
  */
-function comparableExpressionValue (value: any) {
+function comparableExpressionValue (value: any): string {
   if (typeof value !== 'object' || value === null) { return value }
   else if (value.hasOwnProperty('path')) {
     // Links
-    return value.path
+    return value.path as string
   } else {
     // Fallback/default; render the value as JSON.
     return JSON.stringify(value)
