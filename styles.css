@@ -101,7 +101,7 @@
   opacity: 1.0;
 }
 
-.page-gallery__tile--loading {
+.page-gallery__tile-image--loading {
   height: var(--image-height);
 }
 
