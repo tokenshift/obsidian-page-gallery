@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.7.0] - 2023-05-04
 
 ### Modified
 
@@ -8,6 +8,7 @@
   This dramatically increases performance on large page galleries.
 * Updates to the filter string are now debounced to keep the UI from freezing
   up repeatedly as you type.
+* Miscellaneous additional performance improvements for large galleries.
 
 ## [0.6.2] - 2023-05-01
 
