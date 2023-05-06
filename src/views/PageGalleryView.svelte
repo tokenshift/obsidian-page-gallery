@@ -3,14 +3,12 @@
   import type { Readable } from 'svelte/store'
 
   import type { ViewConfig } from '../Config'
-  import type ExpressionCache from '../ExpressionCache'
   import type PageService from '../PageService'
-  import PageGalleryTile from './PageGalleryTile.svelte'
+  import PageGalleryGroup from './PageGalleryGroup.svelte';
 
   export let view: ViewConfig
   export let filter: Readable<string>
 
-  const cache = getContext<ExpressionCache>('ExpressionCache')
   const pageService = getContext<PageService>('PageService')
 
   export function refresh () { view = view }
@@ -32,35 +30,7 @@
   style:--custom-image-position={view.position || null}
   style:--custom-image-repeat={view.repeat || null}>
   {#each groups as group}
-  <div class="page-gallery__group">
-    {#if group.value}
-    <header class="page-gallery__group-title">
-      <h3>
-        {#if cache.appearsRenderable(group.value)}
-        {#await cache.renderFieldValue(group.value) then rendered}
-        {@html rendered}
-        {/await}
-        {:else}
-        {group.value}
-        {/if}
-      </h3>
-    </header>
-    {:else if groups.length > 1}
-    <header class="page-gallery__group-title page-gallery__group-title--fallback">
-      <h3>Other</h3>
-    </header>
-    {/if}
-
-    <div class="page-gallery__tiles">
-      {#each group.pages as page}
-      <PageGalleryTile {page} {view} />
-      {/each}
-    </div>
-  </div>
+    <PageGalleryGroup {group} {groups} {view} />
   {/each}
-  <!--
-    Get all pages matching the `from` and `where` queries.
-    Group them by the `groupBy` clause, if there is any.
-  -->
 </section>
 {/await}

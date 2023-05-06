@@ -7,7 +7,7 @@ import type Config from './Config'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import PageGallery from './views/PageGallery.svelte'
 
-const DEBOUNCE_RENDER_TIME = 500
+const DEBOUNCE_RENDER_TIME = 1000
 
 export type PageGalleryRenderChildOptions = {
   sourcePath: string
@@ -43,7 +43,7 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     this.config = config
   }
 
-  refresh = debounce(async () => {
+  async refreshNow () {
     try {
       if (!this.parentPage) {
         this.parentPage = this.api.page(this.sourcePath) as Record<string, any>
@@ -68,7 +68,9 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
     } catch (err) {
       console.error(err)
     }
-  }, DEBOUNCE_RENDER_TIME, true)
+  }
+
+  refresh = debounce(this.refreshNow, DEBOUNCE_RENDER_TIME, true)
 
   async onload () {
     this.registerEvent(this.plugin.app.metadataCache.on('dataview:metadata-change' as 'resolved', () => {
@@ -79,6 +81,6 @@ export default class PageGalleryRenderChild extends MarkdownRenderChild {
       this.refresh()
     }))
 
-    this.refresh()
+    this.refreshNow()
   }
 }

@@ -140,6 +140,7 @@
   justify-content: center;
   min-height: var(--image-height);
   text-align: center;
+  text-decoration: none !important;
 }
 
 .page-gallery__tile-image--fallback:hover, .page-gallery__tile-image--fallback:focus {

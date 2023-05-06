@@ -28,15 +28,15 @@
     setVisibility(visible)
   })
 
-  let tileRoot: HTMLElement
-
   onMount(() => {
-    observer.observe(tileRoot);
-  });
+    observer.observe(tileRoot)
+  })
 
   onDestroy(() => {
-    observer.disconnect();
-  });
+    observer.disconnect()
+  })
+
+  let tileRoot: HTMLElement
 </script>
 
 <div bind:this={tileRoot} class="page-gallery__tile"
