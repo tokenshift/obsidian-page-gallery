@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { debounce } from 'obsidian'
-  import { getContext, onMount, onDestroy } from 'svelte'
+  import { getContext } from 'svelte'
 
   import type { ViewConfig } from 'src/Config'
   import type ExpressionCache from '../ExpressionCache'

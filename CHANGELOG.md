@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.7.1] - 2023-05-05
+
+### Fixed
+
+* The page gallery will load immediately on first load, rather than waiting
+  (indefinitely) for all filesystem updates to settle down. This was causing
+  galleries to not render at all if Obsidian Sync was still running in the
+  background, which can take a while.
+* Removed caching. It was crashing Obsidian due to OOM errors on really large
+  galleries, and no longer improves performance that much due to previous
+  changes. Will re-evaluate caching options in the future if I can find a good
+  caching or embedded DB library that doesn't cause the same OOM errors on large
+  galleries, and actually manages to be faster than just re-rendering/re-evaluating
+  expressions when needed.
+
 ## [0.7.0] - 2023-05-04
 
 ### Modified
