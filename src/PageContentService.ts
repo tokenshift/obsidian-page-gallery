@@ -4,7 +4,6 @@ import { Component, MarkdownPreviewView, TFile } from 'obsidian'
 import * as path from './path'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import type { Page } from './PageService'
-import NestedCache from './NestedCache'
 
 export const IMG_MIME_TYPES = [
   'image/jpeg',
@@ -13,9 +12,6 @@ export const IMG_MIME_TYPES = [
   'image/bmp',
   'image/webp'
 ]
-
-const _contentCache = new NestedCache<Promise<string | null>>()
-const _elementCache = new NestedCache<Promise<HTMLElement | null>>()
 
 export default class PageContentService {
   plugin: PageGalleryPlugin
@@ -30,35 +26,31 @@ export default class PageContentService {
   }
 
   async getContent (page: Page): Promise<string | null> {
-    return _contentCache.nested(page).fetch('getContent', async () => {
-      const file = this.plugin.app.vault.getAbstractFileByPath(page.file.path)
+    const file = this.plugin.app.vault.getAbstractFileByPath(page.file.path)
 
-      if (!(file instanceof TFile)) {
-        return null
-      }
+    if (!(file instanceof TFile)) {
+      return null
+    }
 
-      const content = await this.plugin.app.vault.cachedRead(file as TFile)
+    const content = await this.plugin.app.vault.cachedRead(file as TFile)
 
-      return content
-    })
+    return content
   }
 
   async getRenderedContent (page: Page): Promise<HTMLElement | null> {
-    return _elementCache.nested(page).fetch('getRenderedContent', async () => {
-      const source = await this.getContent(page)
-      if (!source) { return null }
+    const source = await this.getContent(page)
+    if (!source) { return null }
 
-      const rendered = document.createElement('div')
+    const rendered = document.createElement('div')
 
-      // The .render-bypass class is included so that we can detect elsewhere
-      // if we're inside another page gallery render call, to short-circuit
-      // recursive rendering.
-      rendered.classList.add('render-bypass')
+    // The .render-bypass class is included so that we can detect elsewhere
+    // if we're inside another page gallery render call, to short-circuit
+    // recursive rendering.
+    rendered.classList.add('render-bypass')
 
-      MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this.component)
+    MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this.component)
 
-      return rendered
-    })
+    return rendered
   }
 
   /**
@@ -68,34 +60,32 @@ export default class PageContentService {
    * all .internal-embed[src] elements with img[src] elements.
    */
   async getRenderedContentWithImages (page: Page): Promise<HTMLElement | null> {
-    return _elementCache.nested(page).fetch('getRenderedContentWithImages', async () => {
-      const rendered = await this.getRenderedContent(page)
-      if (!rendered) { return null }
+    const rendered = await this.getRenderedContent(page)
+    if (!rendered) { return null }
 
-      for (const el of rendered.findAll('.internal-embed[src]')) {
-        const src = el.getAttribute('src')
-        if (!src) { continue }
+    for (const el of rendered.findAll('.internal-embed[src]')) {
+      const src = el.getAttribute('src')
+      if (!src) { continue }
 
-        const ext = src.split('.').pop()
-        if (!ext) { continue }
+      const ext = src.split('.').pop()
+      if (!ext) { continue }
 
-        const mimeType = mime.getType(ext)
-        if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
+      const mimeType = mime.getType(ext)
+      if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
 
-        const file = this.getClosestMatchingImageSrc(src, page)
-        if (!file) { continue }
+      const file = this.getClosestMatchingImageSrc(src, page)
+      if (!file) { continue }
 
-        const imageSrc = this.plugin.app.vault.getResourcePath(file)
+      const imageSrc = this.plugin.app.vault.getResourcePath(file)
 
-        el.innerHTML = ''
-        const img = document.createElement('img')
-        img.setAttribute('alt', el.getAttribute('alt') || '')
-        img.setAttribute('src', imageSrc)
-        el.appendChild(img)
-      }
+      el.innerHTML = ''
+      const img = document.createElement('img')
+      img.setAttribute('alt', el.getAttribute('alt') || '')
+      img.setAttribute('src', imageSrc)
+      el.appendChild(img)
+    }
 
-      return rendered
-    })
+    return rendered
   }
 
   /** Attempts to find the *right* matching image, in the event that there's
@@ -139,31 +129,29 @@ export default class PageContentService {
   }
 
   async getFirstImageSrc (page: Page): Promise<string | null> {
-    return _contentCache.nested(page).fetch('getFirstImageSrc', async () => {
-      const rendered = await this.getRenderedContent(page)
-      if (!rendered) { return null }
+    const rendered = await this.getRenderedContent(page)
+    if (!rendered) { return null }
 
-      for (const el of rendered.findAll('.internal-embed[src], img[src]')) {
-        const src = el.getAttribute('src')
-        if (!src) { continue }
+    for (const el of rendered.findAll('.internal-embed[src], img[src]')) {
+      const src = el.getAttribute('src')
+      if (!src) { continue }
 
-        if (el.tagName === 'IMG' && src.match(/^https?:\/\//)) {
-          return src
-        }
-
-        const ext = src.split('.').pop()
-        if (!ext) { continue }
-
-        const mimeType = mime.getType(ext)
-        if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
-
-        const file = this.getClosestMatchingImageSrc(src, page)
-        if (!file) { continue }
-
-        return this.plugin.app.vault.getResourcePath(file)
+      if (el.tagName === 'IMG' && src.match(/^https?:\/\//)) {
+        return src
       }
 
-      return null
-    })
+      const ext = src.split('.').pop()
+      if (!ext) { continue }
+
+      const mimeType = mime.getType(ext)
+      if (!mimeType || !IMG_MIME_TYPES.contains(mimeType)) { continue }
+
+      const file = this.getClosestMatchingImageSrc(src, page)
+      if (!file) { continue }
+
+      return this.plugin.app.vault.getResourcePath(file)
+    }
+
+    return null
   }
 }
