@@ -2,9 +2,9 @@ import mime from 'mime'
 import { Component, MarkdownPreviewView, TFile } from 'obsidian'
 
 import * as path from './path'
-import LRUCache from './LRUCache'
 import type PageGalleryPlugin from './PageGalleryPlugin'
 import type { Page } from './PageService'
+import NestedCache from './NestedCache'
 
 export const IMG_MIME_TYPES = [
   'image/jpeg',
@@ -14,11 +14,12 @@ export const IMG_MIME_TYPES = [
   'image/webp'
 ]
 
+const _contentCache = new NestedCache<Promise<string | null>>()
+const _elementCache = new NestedCache<Promise<HTMLElement | null>>()
+
 export default class PageContentService {
   plugin: PageGalleryPlugin
   component: Component
-
-  _cache = new LRUCache()
 
   constructor(options: {
     plugin: PageGalleryPlugin,
@@ -29,16 +30,7 @@ export default class PageContentService {
   }
 
   async getContent (page: Page): Promise<string | null> {
-    const cacheKey = JSON.stringify({
-      operation: 'getContent',
-      page: {
-        path: page.file.path,
-        mtime: page.file.mtime,
-        size: page.file.size
-      }
-    })
-
-    return this._cache.fetch(cacheKey, async (): Promise<string | null> => {
+    return _contentCache.nested(page).fetch('getContent', async () => {
       const file = this.plugin.app.vault.getAbstractFileByPath(page.file.path)
 
       if (!(file instanceof TFile)) {
@@ -48,20 +40,11 @@ export default class PageContentService {
       const content = await this.plugin.app.vault.cachedRead(file as TFile)
 
       return content
-    }) as Promise<string | null>
+    })
   }
 
   async getRenderedContent (page: Page): Promise<HTMLElement | null> {
-    const cacheKey = JSON.stringify({
-      operation: 'getRenderedContent',
-      page: {
-        path: page.file.path,
-        mtime: page.file.mtime,
-        size: page.file.size
-      }
-    })
-
-    return this._cache.fetch(cacheKey, async (): Promise<HTMLElement | null> => {
+    return _elementCache.nested(page).fetch('getRenderedContent', async () => {
       const source = await this.getContent(page)
       if (!source) { return null }
 
@@ -75,7 +58,7 @@ export default class PageContentService {
       MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this.component)
 
       return rendered
-    }) as Promise<HTMLElement | null>
+    })
   }
 
   /**
@@ -85,16 +68,7 @@ export default class PageContentService {
    * all .internal-embed[src] elements with img[src] elements.
    */
   async getRenderedContentWithImages (page: Page): Promise<HTMLElement | null> {
-    const cacheKey = JSON.stringify({
-      operation: 'getRenderedContentWithImages',
-      page: {
-        path: page.file.path,
-        mtime: page.file.mtime,
-        size: page.file.size
-      }
-    })
-
-    return this._cache.fetch(cacheKey, async (): Promise<HTMLElement | null> => {
+    return _elementCache.nested(page).fetch('getRenderedContentWithImages', async () => {
       const rendered = await this.getRenderedContent(page)
       if (!rendered) { return null }
 
@@ -121,7 +95,7 @@ export default class PageContentService {
       }
 
       return rendered
-    }) as Promise<HTMLElement | null>
+    })
   }
 
   /** Attempts to find the *right* matching image, in the event that there's
@@ -165,16 +139,7 @@ export default class PageContentService {
   }
 
   async getFirstImageSrc (page: Page): Promise<string | null> {
-    const cacheKey = JSON.stringify({
-      operation: 'getFirstImageSrc',
-      page: {
-        path: page.file.path,
-        mtime: page.file.mtime,
-        size: page.file.size
-      }
-    })
-
-    return this._cache.fetch(cacheKey, async (): Promise<string | null> => {
+    return _contentCache.nested(page).fetch('getFirstImageSrc', async () => {
       const rendered = await this.getRenderedContent(page)
       if (!rendered) { return null }
 
@@ -199,6 +164,6 @@ export default class PageContentService {
       }
 
       return null
-    }) as string | null
+    })
   }
 }

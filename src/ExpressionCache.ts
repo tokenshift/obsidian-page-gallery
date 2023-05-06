@@ -1,9 +1,11 @@
 import type { Component } from 'obsidian'
 import type { DataviewApi } from 'obsidian-dataview'
 
-import LRUCache from './LRUCache'
 import type { Page } from './PageService'
+import NestedCache from './NestedCache'
 
+const _evaluateCache = new NestedCache<any>()
+const _renderExpressionCache = new NestedCache<Promise<string | null>>()
 export default class ExpressionCache {
   component: Component
   api: DataviewApi
@@ -35,23 +37,11 @@ export default class ExpressionCache {
     return false
   }
 
-  _evaluateCache = new LRUCache<any>()
-  evaluate<TResult> (expression: string, page: Page | null = null) {
-    const cacheKey = JSON.stringify({
-      parent: {
-        path: this.parentPage.file.path,
-        mtime: this.parentPage.file.mtime.toMillis(),
-        size: this.parentPage.file.size
-      },
-      page: {
-        path: page?.file.path,
-        mtime: page?.file.mtime.toMillis(),
-        size: page?.file.size
-      },
-      expression
-    })
-
-    return this._evaluateCache.fetch(cacheKey, () => {
+  evaluate<TResult> (expression: string, page: Page) {
+    return _evaluateCache
+      .nested(this.parentPage)
+      .nested(page)
+      .fetch(expression, () => {
       const result = this.api.evaluate(expression, {
         ...page,
         this: this.parentPage
@@ -65,23 +55,11 @@ export default class ExpressionCache {
     })
   }
 
-  _renderExpressionCache = new LRUCache<Promise<string | null>>()
-  async renderExpression (expression: string, page: Page | null = null): Promise<string | null> {
-    const cacheKey = JSON.stringify({
-      parent: {
-        path: this.parentPage.file.path,
-        mtime: this.parentPage.file.mtime.toMillis(),
-        size: this.parentPage.file.size
-      },
-      page: {
-        path: page?.file.path,
-        mtime: page?.file.mtime.toMillis(),
-        size: page?.file.size
-      },
-      expression
-    })
-
-    return this._renderExpressionCache.fetch(cacheKey, async () => {
+  async renderExpression (expression: string, page: Page): Promise<string | null> {
+    return _renderExpressionCache
+      .nested(this.parentPage)
+      .nested(page)
+      .fetch(expression, async () => {
       const value = this.evaluate(expression, page)
       if (!value) { return null }
 
@@ -89,29 +67,12 @@ export default class ExpressionCache {
     })
   }
 
-  _renderFieldValueCache = new LRUCache<Promise<string | null>>()
   async renderFieldValue (value: any, page: Page | null = null): Promise<string | null> {
-    const cacheKey = JSON.stringify({
-      parent: {
-        path: this.parentPage.file.path,
-        mtime: this.parentPage.file.mtime.toMillis(),
-        size: this.parentPage.file.size
-      },
-      page: {
-        path: page?.file.path,
-        mtime: page?.file.mtime.toMillis(),
-        size: page?.file.size
-      },
-      value
-    })
+    if (!value) { return null }
 
-    return this._renderFieldValueCache.fetch(cacheKey, async () => {
-      if (!value) { return null }
+    const temp = document.createElement('div')
+    await this.api.renderValue(value, temp, this.component, page?.file.path || this.parentPage.file.path, true)
 
-      const temp = document.createElement('div')
-      await this.api.renderValue(value, temp, this.component, page?.file.path || this.parentPage.file.path, true)
-
-      return temp.innerHTML
-    })
+    return temp.innerHTML
   }
 }
