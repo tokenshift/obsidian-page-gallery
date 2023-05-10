@@ -149,7 +149,7 @@ export default class PageService {
 
       const groupComparable = groupValue === null
         ? ''
-        : comparableExpressionValue(groupValue)
+        : comparableExpressionValue(groupValue, false)
 
       if (groupComparable in groups) {
         groups[groupComparable].pages.push(page)
@@ -177,13 +177,17 @@ export default class PageService {
  * convert them to a comparable primitive value, usually by using one or more
  * of its fields.
  */
-function comparableExpressionValue (value: any): string {
+function comparableExpressionValue (value: any, caseSensitive = true): string {
   if (typeof value !== 'object' || value === null) { return value }
   else if (value.hasOwnProperty('path')) {
     // Links
-    return value.path as string
+    return caseSensitive
+      ? value.path as string
+      : value.path.toLowerCase() as string
   } else {
     // Fallback/default; render the value as JSON.
-    return JSON.stringify(value)
+    return caseSensitive
+      ? JSON.stringify(value)
+      : JSON.stringify(value).toLowerCase()
   }
 }

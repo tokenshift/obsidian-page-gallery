@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Modified
+
+* Groups are now sorted case-insensitively.
+
 ## [0.7.1] - 2023-05-05
 
 ### Fixed
