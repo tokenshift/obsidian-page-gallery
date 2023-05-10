@@ -147,18 +147,24 @@ export default class PageService {
         ? this.cache.evaluate<string>(groupBy, page)
         : null
 
-      const groupComparable = groupValue === null
-        ? ''
-        : comparableExpressionValue(groupValue, false)
+      const groupValues = Array.isArray(groupValue)
+        ? groupValue
+        : [groupValue]
 
-      if (groupComparable in groups) {
-        groups[groupComparable].pages.push(page)
-      } else {
-        groups[groupComparable] = {
-          value: groupValue,
-          comparable: groupComparable,
-          pages: [page]
-        }
+      for (const groupValue of groupValues) {
+        const groupComparable = groupValue === null
+          ? ''
+          : comparableExpressionValue(groupValue, false)
+
+          if (groupComparable in groups) {
+            groups[groupComparable].pages.push(page)
+          } else {
+            groups[groupComparable] = {
+              value: groupValue,
+              comparable: groupComparable,
+              pages: [page]
+            }
+          }
       }
     }
 
