@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+* New "square" option for the "orientation" setting.
+
 ### Modified
 
 * Groups are now sorted case-insensitively.

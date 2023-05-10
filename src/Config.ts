@@ -24,8 +24,8 @@ export const VIEW_CONFIG_SCHEMA = {
   columns: { type: 'number' },
   gutterSize: { type: 'string' },
   orientation: { type: 'string', inclusion: {
-    within: ['portrait', 'landscape'],
-    message: 'must be "portrait" (default) or "landscape"'
+    within: ['portrait', 'landscape', 'square'],
+    message: 'must be "portrait" (default), "landscape", or "square"'
   } },
   radius: { type: 'string' },
   height: { type: 'string' },
@@ -107,12 +107,15 @@ export class ViewConfig {
   }
 
   get aspectRatio () {
-    if (!this.orientation || this.orientation === 'portrait') {
-      return GOLDEN_RATIO
-    } else if (this.orientation === 'landscape') {
-      return 1 / GOLDEN_RATIO
-    } else {
-      return null
+    switch (this.orientation) {
+      case 'portrait':
+        return GOLDEN_RATIO
+      case 'landscape':
+        return 1 / GOLDEN_RATIO
+      case 'square':
+        return 1
+      default:
+        return GOLDEN_RATIO
     }
   }
 }
