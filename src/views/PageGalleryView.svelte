@@ -29,6 +29,12 @@
   style:--custom-image-size={view.size || null}
   style:--custom-image-position={view.position || null}
   style:--custom-image-repeat={view.repeat || null}>
+  {#if groups.length < 1}
+    <div class="page-gallery__group page-gallery__group--empty">
+      Nothing to see here!
+    </div>
+  {/if}
+
   {#each groups as group}
     <PageGalleryGroup {group} {groups} {view} />
   {/each}

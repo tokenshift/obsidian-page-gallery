@@ -5,6 +5,8 @@
 ### Added
 
 * New "square" option for the "orientation" setting.
+* "Empty" indicator for tabs with no content, so that it doesn't look like they
+  just failed to load.
 
 ### Modified
 
