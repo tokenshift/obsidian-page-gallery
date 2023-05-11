@@ -15,6 +15,8 @@
 * If the `groupBy` value for a given page has more than one value, the page will
   now show up under every matching group, rather than `[groupA, groupB]` being
   treated as a totally separate group on its own.
+* The filter bar now searches for matches within tags, page paths, and other
+  metadata defined in frontmatter or as obsidian-dataview inline fields.
 
 ## [0.7.1] - 2023-05-05
 

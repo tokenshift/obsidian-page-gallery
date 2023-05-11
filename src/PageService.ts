@@ -87,21 +87,34 @@ export default class PageService {
   matchFilter (filter: string, page: Page): boolean {
     const patterns = filter.split(/\s+/).map(p => p.toLowerCase())
 
+    // *All* of the defined patterns must match for the filter as a whole to
+    // match. Patterns can match tags, filenames/paths, or other page metadata
+    // defined either in frontmatter or inline (obsidian-dataview style).
     for (const pattern of patterns) {
       if (pattern.startsWith('#')) {
         // Match tags
-        for (const tag of page.file.tags) {
-          if (tag.toLowerCase().startsWith(pattern)) {
-            return true
-          }
-        }
-
-        return false
-      } else {
-        // Match path
-        if (!page.file.path.toLowerCase().contains(pattern)) {
+        if (!page.file.tags.find((t: string) => t.toLowerCase().startsWith(pattern))) {
           return false
         }
+      } else {
+        // Match page pat
+        if (page.file.path.toLowerCase().contains(pattern)) {
+          continue
+        }
+
+        // Match other page metadata
+        const match = Object.keys(page)
+          .filter(k => k != 'file')
+          .map(key => page[key])
+          .flatMap(val => Array.isArray(val) ? val : [val])
+          .map(val => typeof val === 'object' && 'path' in val ? val.path : val)
+          .filter(val => typeof val !== 'object' && typeof val !== 'undefined')
+          .find(val => val.toString().toLowerCase().contains(pattern))
+        if (match) {
+          continue
+        }
+
+        return  false
       }
     }
 
