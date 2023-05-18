@@ -21,7 +21,7 @@
   export let parentPage: Record<string, any>
 
   const cache = new ExpressionCache({ api, component, parentPage })
-  const pageService = new PageService({ api, cache })
+  const pageService = new PageService({ api, cache, parentPage: parentPage.file.path })
   const pageContentService = new PageContentService({ plugin, component })
 
   let refreshCurrentView: () => void

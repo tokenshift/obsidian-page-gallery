@@ -14,13 +14,16 @@ export type PageGroup = {
 export default class PageService {
   api: DataviewApi
   cache: ExpressionCache
+  parentPage: string
 
   constructor(options: {
     api: DataviewApi,
     cache: ExpressionCache
+    parentPage: string
   }) {
     this.api = options.api
     this.cache = options.cache
+    this.parentPage = options.parentPage
   }
 
   async getPageGroups (options: {
@@ -40,8 +43,9 @@ export default class PageService {
       limit
     } = options
 
+    console.log('HERE')
     let pages = from
-      ? this.api.pages(from)
+      ? this.api.pages(from, this.parentPage)
       : this.api.pages()
 
     if (where) {

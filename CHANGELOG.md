@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+* Using `[[]]` or `[[#]]` to refer to the current page in the `from` clause now\
+  works correctly.
+
 ## [0.7.2] - 2023-05-10
 
 ### Added
