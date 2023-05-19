@@ -43,7 +43,6 @@ export default class PageService {
       limit
     } = options
 
-    console.log('HERE')
     let pages = from
       ? this.api.pages(from, this.parentPage)
       : this.api.pages()

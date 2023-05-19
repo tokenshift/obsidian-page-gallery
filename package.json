@@ -1,6 +1,6 @@
 {
   "name": "obsidian-page-gallery",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Creates an embeddable gallery based on selected page contents.",
   "main": "./src/PageGalleryPlugin.ts",
   "scripts": {
