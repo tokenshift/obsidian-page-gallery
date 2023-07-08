@@ -4,22 +4,22 @@
 
   import type { ViewConfig } from '../Config'
   import type PageService from '../PageService'
-  import PageGalleryGroup from './PageGalleryGroup.svelte';
+  import type { PageGroup } from '../PageService'
+  import PageGalleryGroup from './PageGalleryGroup.svelte'
 
   export let view: ViewConfig
   export let filter: Readable<string>
 
   const pageService = getContext<PageService>('PageService')
 
-  export function refresh () { view = view }
+  export async function refresh () {
+    groups = await pageService.getPageGroups({ ...view, filter: $filter } )
+  }
+
+  let groups: PageGroup[] = []
 </script>
 
-{#await pageService.getPageGroups({ ...view, filter: $filter } )}
-<section class="page-gallery__view page-gallery__view--loading">
-  Loading...
-</section>
-{:then groups}
-<section class="page-gallery__view page-gallery__view--loaded"
+<section class="page-gallery__view"
   style:--custom-columns={view.columns || null}
   style:--custom-gutter-size={view.gutterSize || null}
   style:--custom-aspect-ratio={view.aspectRatio || null}
@@ -39,4 +39,3 @@
     <PageGalleryGroup {group} {groups} {view} />
   {/each}
 </section>
-{/await}

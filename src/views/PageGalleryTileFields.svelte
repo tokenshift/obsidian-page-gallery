@@ -10,7 +10,7 @@
 
   const cache = getContext<ExpressionCache>('ExpressionCache')
 
-  function getFieldValues () {
+  function getFieldValues (page: Page, view: ViewConfig) {
     return view.fields
       .map(expression => ({
         expression,
@@ -20,7 +20,7 @@
   }
 </script>
 
-{#await getFieldValues() then fields}
+{#await getFieldValues(page, view) then fields}
 {#if fields.length > 0}
   <div class="page-gallery__fields">
     {#each fields as field}

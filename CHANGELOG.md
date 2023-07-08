@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+* Added workaround for content rendering issue when Banners plugin is present (#48).
+* Re-worked refresh mechanism to avoid fully redrawing the page-gallery view
+  whenever a page is updated ("flashing" issue - #50).
+
 ## [0.7.3] - 2023-05-19
 
 ### Fixed
