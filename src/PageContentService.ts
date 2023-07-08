@@ -41,16 +41,25 @@ export default class PageContentService {
     const source = await this.getContent(page)
     if (!source) { return null }
 
-    const rendered = document.createElement('div')
+    // The "Banners" plugin attempts to navigate one element up from the one
+    // being rendered to in order to attach some mouse event handlers. If there
+    // is no parent element, this fails and throws an exception, which causes
+    // obsidian's own page rendering to fail. Wrapping the div to be rendered to
+    // in another parent div fixes this (even though the event handlers that
+    // Banners is adding are going to be discarded anyway).
+    const parent = document.createElement('div')
 
     // The .render-bypass class is included so that we can detect elsewhere
     // if we're inside another page gallery render call, to short-circuit
     // recursive rendering.
-    rendered.classList.add('render-bypass')
+    parent.classList.add('render-bypass')
 
-    MarkdownPreviewView.renderMarkdown(source, rendered, page.file.path, this.component)
+    const renderTarget = document.createElement('div')
+    parent.appendChild(renderTarget)
 
-    return rendered
+    MarkdownPreviewView.renderMarkdown(source, renderTarget, page.file.path, this.component)
+
+    return renderTarget
   }
 
   /**
