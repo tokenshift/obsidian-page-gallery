@@ -12,8 +12,11 @@
 
   const pageService = getContext<PageService>('PageService')
 
-  export async function refresh () {
-    groups = await pageService.getPageGroups({ ...view, filter: $filter } )
+  export async function refresh () { view = view }
+
+  $: {
+    pageService.getPageGroups({ ...view, filter: $filter } )
+    .then((gs) => groups = gs)
   }
 
   let groups: PageGroup[] = []
