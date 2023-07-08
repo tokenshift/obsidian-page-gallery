@@ -39,7 +39,7 @@ export default class ExpressionCache {
     const result = this.api.evaluate(expression, {
       ...page,
       this: this.parentPage
-    })
+    }, this.parentPage.file.path)
 
     const value = result.successful
       ? result.value as TResult
