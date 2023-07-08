@@ -24,7 +24,7 @@
   const pageService = new PageService({ api, cache, parentPage: parentPage.file.path })
   const pageContentService = new PageContentService({ plugin, component })
 
-  let refreshCurrentView: () => void
+  let refreshCurrentView: () => Promise<void>
 
   export function refresh () {
     refreshCurrentView()
