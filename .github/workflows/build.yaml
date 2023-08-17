@@ -26,5 +26,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install --omit dev
+    - run: npm install
     - run: npm run build
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        name: styles.css
+        path: styles.css
+        retention-days: 14
