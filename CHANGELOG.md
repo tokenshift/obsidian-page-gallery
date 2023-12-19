@@ -1,6 +1,6 @@
 # Changelog
 
-## [UNRELEASED]
+## [0.8.0] - 2023-12-18
 
 ### Added
 
@@ -26,7 +26,7 @@
 
 ### Fixed
 
-* Using `[[]]` or `[[#]]` to refer to the current page in the `from` clause now\
+* Using `[[]]` or `[[#]]` to refer to the current page in the `from` clause now
   works correctly.
 
 ## [0.7.2] - 2023-05-10
