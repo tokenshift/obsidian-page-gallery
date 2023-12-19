@@ -6,7 +6,6 @@ export const DEFAULT_VIEW_CONFIG = {
   mode: 'auto',
   fields: [],
   limit: 100,
-  filter: true,
   sortBy: ['file.path']
 }
 
@@ -21,6 +20,7 @@ export const VIEW_CONFIG_SCHEMA = {
   groupBy: { type: 'string' },
   sortBy: { type: 'array' },
   filter: { type: 'boolean' },
+  count: { type: 'boolean' },
   columns: { type: 'number' },
   gutterSize: { type: 'string' },
   orientation: { type: 'string', inclusion: {
@@ -42,6 +42,7 @@ export const VIEW_CONFIG_SCHEMA = {
 export class ViewConfig {
     name: string
     mode: string
+    count: boolean
 
     from: string
     where: string
@@ -134,6 +135,7 @@ export default class Config {
 
   title: string | null
   filter: boolean
+  count: boolean
   debug: boolean
 
   constructor (options: Record<string, any>) {
@@ -155,6 +157,10 @@ export default class Config {
 
     this.filter = options.hasOwnProperty('filter')
       ? options.filter == true
+      : true
+
+    this.count = options.hasOwnProperty('count')
+      ? options.count == true
       : true
 
     this.debug = options.hasOwnProperty('debug')

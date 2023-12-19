@@ -32,6 +32,11 @@
   text-decoration: none;
 }
 
+.page-gallery__total-count {
+  font-style: italic;
+  text-align: right;
+}
+
 .page-gallery__views-header {
   display: flex;
   list-style: none;
@@ -55,6 +60,10 @@
 .page-gallery__views-header-item.selected {
   background: linear-gradient(to bottom right, rgba(100, 100, 100, 0.5), rgba(100, 100, 100, 1));
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
+}
+
+.page-gallery__views-header-item-count {
+  margin-left: 0.2em;
 }
 
 .page-gallery__view {

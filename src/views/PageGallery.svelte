@@ -46,6 +46,15 @@
     selectedView = view
     selectedViewIndex = viewIndex
   }
+
+  async function getViewCount (view: ViewConfig) {
+    const groups = await pageService.getPageGroups({ ...view, filter: '' })
+
+    // Want to only count unique pages in each view (since the same page can
+    // show up in multiple groups in the page).
+    const paths = groups.flatMap((group) => group.pages.map((page) => page.file.path))
+    return new Set(paths).size
+  }
 </script>
 
 <div class="page-gallery">
@@ -61,6 +70,12 @@
   <PageGalleryFilter {filter} />
   {/if}
 
+  {#if config.count && config.views.length === 1}
+    {#await getViewCount(config.views[0]) then count}
+      <div class="page-gallery__total-count">Total: {count}</div>
+    {/await}
+  {/if}
+
   <div class="page-gallery__views">
     {#if config.views.length > 1}
     <div class="page-gallery__views-header">
@@ -72,11 +87,16 @@
         on:click={() => handleSelectView(view, index)}
         on:keypress={() => handleSelectView(view, index)}>
         {view.name}
+        {#if config.count}
+          {#await getViewCount(view) then count}
+            <span class="page-gallery__views-header-item-count">({count})</span>
+          {/await}
+        {/if}
       </div>
       {/each}
     </div>
     {/if}
 
-    <PageGalleryView view={selectedView} filter={debouncedFilter} bind:refresh={refreshCurrentView} />
+    <PageGalleryView {config} view={selectedView} filter={debouncedFilter} bind:refresh={refreshCurrentView} />
   </div>
 </div>

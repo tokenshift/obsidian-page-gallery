@@ -1,7 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte'
 
-  import type { ViewConfig } from 'src/Config'
+  import type Config from '../Config'
+  import type { ViewConfig } from '../Config'
   import type ExpressionCache from '../ExpressionCache'
   import type { PageGroup } from '../PageService'
 
@@ -9,11 +10,16 @@
 
   export let group: PageGroup
   export let groups: PageGroup[]
+  export let config: Config
   export let view: ViewConfig
 
   const cache = getContext<ExpressionCache>('ExpressionCache')
 
   let collapsed = false
+
+  async function getGroupCount (group: PageGroup) {
+    return new Set(group.pages.map((page) => page.file.path)).size
+  }
 </script>
 
 <div class="page-gallery__group">
@@ -35,6 +41,11 @@
         {:else}
           {group.value}
         {/if}
+        {#if config.count}
+          {#await getGroupCount(group) then count}
+            <span class="page-gallery__group-title-count">({count})</span>
+          {/await}
+        {/if}
       </h3>
     </header>
   {:else if groups.length > 1}
@@ -49,6 +60,11 @@
           {collapsed ? '🔽' : '🔼'}
         </span>
         Other
+        {#if config.count}
+          {#await getGroupCount(group) then count}
+            <span class="page-gallery__group-title-count">({count})</span>
+          {/await}
+        {/if}
       </h3>
     </header>
   {/if}

@@ -2,11 +2,13 @@
   import { getContext } from 'svelte'
   import type { Readable } from 'svelte/store'
 
+  import type Config from '../Config'
   import type { ViewConfig } from '../Config'
   import type PageService from '../PageService'
   import type { PageGroup } from '../PageService'
   import PageGalleryGroup from './PageGalleryGroup.svelte'
 
+  export let config: Config
   export let view: ViewConfig
   export let filter: Readable<string>
 
@@ -39,6 +41,6 @@
   {/if}
 
   {#each groups as group}
-    <PageGalleryGroup {group} {groups} {view} />
+    <PageGalleryGroup {group} {groups} {config} {view} />
   {/each}
 </section>

@@ -48,6 +48,7 @@ Options in the `page-gallery` block are parsed using YAML.
 |----------|----------------|---------|-------------|
 | `title`  | `string`       | `null`  | An optional title for the page gallery. |
 | `filter` | `boolean`      | `true`  | Whether  or  not to show the filter bar. |
+| `count`  | `boolean`      | `true`  | Whether to show view and group counts. |
 | `debug`  | `boolean`      | `false` | Whether or not to display debug information. Useful primarily for development. |
 | `views`  | `ViewConfig[]` | `[]`    | A list of individual view configuration blocks (see below). |
 
