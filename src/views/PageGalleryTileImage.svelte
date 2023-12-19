@@ -30,6 +30,7 @@
         <!-- Display the image (if there is one). -->
         <a class="page-gallery__tile-image--image internal-link"
           data-href={page.file.path}
+          data-image-src={imageSrc}
           href={page.file.path}
           rel="noopener"
           style:background-image={`url('${imageSrc}')`}>

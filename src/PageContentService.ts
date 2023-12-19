@@ -158,7 +158,11 @@ export default class PageContentService {
       const file = this.getClosestMatchingImageSrc(src, page)
       if (!file) { continue }
 
-      return this.plugin.app.vault.getResourcePath(file)
+      const path = this.plugin.app.vault.getResourcePath(file)
+      // `getResourcePath` doesn't escape single quotes, which breaks things when
+      // this path is included in the `style:background-src` element. See:
+      // https://github.com/tokenshift/obsidian-page-gallery/issues/57
+      return path.replace('\'', '%27')
     }
 
     return null

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.5] - 2023-12-18
+
+### Fixed
+
+* Fixed a bug where image paths with single quotes in them didn't show up properly (#57).
+
 ## [0.7.4] - 2023-07-08
 
 ### Fixed
