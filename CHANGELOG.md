@@ -1,5 +1,12 @@
 # Changelog
 
+## [UNRELEASED]
+
+### Added
+
+* You can now specify `pageGallery.imageSrc` in frontmatter to set a specific
+  thumbnail image, rather than looking for the first image in the page. (#21)
+
 ## [0.7.5] - 2023-12-18
 
 ### Fixed

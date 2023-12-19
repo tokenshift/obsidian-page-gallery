@@ -137,7 +137,26 @@ export default class PageContentService {
     }
   }
 
+  /** Looks for a `pageGallery.imageSrc` property in frontmatter and uses
+   * that to find the page gallery image.
+   */
+  getImageFromFrontmatter (page: Page): string | null {
+    const { pageGallery: { imageSrc = null } = {} } = page
+    if (!imageSrc) { return null }
+
+    const file = this.getClosestMatchingImageSrc(imageSrc, page)
+    if (!file) { return null}
+
+    const path = this.plugin.app.vault.getResourcePath(file)
+    return path
+  }
+
   async getFirstImageSrc (page: Page): Promise<string | null> {
+    const path = this.getImageFromFrontmatter(page)
+    if (path) {
+      return path.replace('\'', '%27')
+    }
+
     const rendered = await this.getRenderedContent(page)
     if (!rendered) { return null }
 
