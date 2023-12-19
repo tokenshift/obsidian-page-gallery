@@ -144,6 +144,11 @@ export default class PageContentService {
     const { pageGallery: { imageSrc = null } = {} } = page
     if (!imageSrc) { return null }
 
+    // Return http(s) URLs as-is, don't try to look them up in the vault.
+    if (imageSrc.match(/^https?:\/\//)) {
+      return imageSrc
+    }
+
     const file = this.getClosestMatchingImageSrc(imageSrc, page)
     if (!file) { return null}
 
