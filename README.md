@@ -81,8 +81,8 @@ values defined in the root configuration.
 | `position` | `string` | `center` |Positioning of each image in the gallery. Try `top`, `center`, or `bottom` (etc) to change what parts of the images are visible. See [CSS background-position](https://developer.mozilla.org/en-US/docs/Web/CSS/background-position) for available options.|
 | `repeat` | `string` | `no-repeat` | Whether to repeat (i.e. tile) the image in each gallery item. See [CSS background-repeat](https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat) for available options. |
 
-Additionally, the `size`, `position`, and `repeat` values can be overridden on
-a specific page via YAML frontmatter:
+Additionally, the `size`, `position`, `repeat` and `imageSrc` values can be
+overridden on a specific page via YAML frontmatter:
 
 ```yaml
 ---
@@ -90,6 +90,7 @@ pageGallery:
   size: contain
   position: left
   repeat: repeat-x
+  imageSrc: different-image.png
 ---
 ```
 
