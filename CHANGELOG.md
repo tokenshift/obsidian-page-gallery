@@ -1,5 +1,13 @@
 # Changelog
 
+## [UNRELEASED]
+
+### Modified
+
+* Changed how tile widths/heights are calculated to be more consistent on
+  different devices.
+* Tiles are now left-aligned rather than centered in the gallery view (#18).
+
 ## [0.8.0] - 2023-12-18
 
 ### Added

@@ -68,14 +68,10 @@
 
 .page-gallery__view {
   --columns: var(--custom-columns, 4);
-  --gutter-size: var(--custom-gutter-size, 16px);
+  --gutter-size: var(--custom-gutter-size, 0.5em);
   --aspect-ratio: var(--custom-aspect-ratio, 1.618);
   --border-radius: var(--custom-border-radius, 10px);
-  --image-width: var(--custom-image-width, calc(
-    (var(--fill-line-width, 700px)
-    - (var(--columns) - 1) * var(--gutter-size))
-    / var(--columns)));
-  --image-height: var(--custom-image-height, calc(var(--aspect-ratio) * var(--image-width)));
+  --image-width: calc(100% / var(--columns, 4));
   --image-size: var(--custom-image-size, cover);
   --image-position: var(--custom-image-position, center);
   --image-repeat: var(--custom-image-repeat, no-repeat);
@@ -99,12 +95,13 @@
 .page-gallery__tiles {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--gutter-size);
 }
 
 .page-gallery__tile {
   max-width: 100%;
+  min-width: 8em;
+  padding: var(--gutter-size);
+  position: relative;
   width: var(--image-width);
 }
 
@@ -114,10 +111,12 @@
   background-size: var(--image-size, cover);
   border-radius: var(--border-radius, 10px);
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-  display: block;
-  height: var(--image-height);
   opacity: 0.75;
   overflow: hidden;
+
+  display: block;
+  height: 0;
+  padding-bottom: calc(100% * var(--aspect-ratio));
 }
 
 .page-gallery__hidden {
@@ -130,18 +129,25 @@
 }
 
 .page-gallery__tile-image--loading {
-  height: var(--image-height);
+  display: block;
+  height: 0;
+  padding-bottom: calc(100% * var(--aspect-ratio));
 }
 
 .page-gallery__tile-image--content {
   background: linear-gradient(to bottom right, rgba(100, 100, 100, 0.25), rgba(100, 100, 100, 0.5));
   border-radius: var(--border-radius, 10px);
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  height: var(--image-height);
+  display: block;
+  height: 0;
   overflow: auto;
   padding: 0.5em;
+  /*
+  TODO: This leaves a bunch of extra padding at the bottom of the scrollable
+  content tile. Can I remove that somehow? Maybe have the actual content-holding
+  div be *inside* the one with the calculated height (which won't be scrollable)?
+  */
+  padding-bottom: calc(100% * var(--aspect-ratio));
   text-decoration: none !important;
 }
 
@@ -163,10 +169,10 @@
   background: linear-gradient(to bottom right, rgba(100, 100, 100, 0.25), rgba(100, 100, 100, 0.5));
   border-radius: var(--border-radius, 10px);
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: var(--image-height);
+  display: block;
+  height: 0;
+  padding-bottom: calc(60% * var(--aspect-ratio));
+  padding-top: calc(40% * var(--aspect-ratio));
   text-align: center;
   text-decoration: none !important;
 }

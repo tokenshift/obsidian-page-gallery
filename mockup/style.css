@@ -1,0 +1,32 @@
+.page-gallery__view {
+  --aspect-ratio: var(--custom-aspect-ratio, 1.618);
+  --tile-width: calc(100% / var(--columns, 4));
+  --image-height: var(--aspect-ratio) / var(--tile-width);
+}
+.page-gallery__tiles {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.page-gallery__tile {
+  box-sizing: border-box;
+  display: block;
+  min-width: 8em;
+  padding: 0.5em;
+  position: relative;
+  width: var(--tile-width);
+}
+
+.page-gallery__tile-image {
+  background-repeat: var(--image-repeat, no-repeat);
+  background-position: var(--image-position, center);
+  background-size: var(--image-size, cover);
+  border-radius: var(--border-radius, 10px);
+  opacity: 0.75;
+  overflow: hidden;
+
+  display: block;
+  height: 0;
+  padding-top: calc(100% * var(--aspect-ratio));
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
