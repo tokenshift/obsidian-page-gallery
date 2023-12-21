@@ -20,7 +20,8 @@
       data-href={page.file.path}
       href={page.file.path}
       rel="noopener">
-      {@html content?.innerHTML}
+      <div class="page-gallery__tile-image--content-sizer"></div>
+      <div class="page-gallery__tile-image--content-wrapper">{@html content?.innerHTML}</div>
     </a>
   {:else}
     {#await pageContentService.getFirstImageSrc(page)}
@@ -48,7 +49,8 @@
           data-href={page.file.path}
           href={page.file.path}
           rel="noopener">
-          {@html content?.innerHTML}
+          <div class="page-gallery__tile-image--content-sizer"></div>
+          <div class="page-gallery__tile-image--content-wrapper">{@html content?.innerHTML}</div>
         </a>
       {/if}
     {/await}
