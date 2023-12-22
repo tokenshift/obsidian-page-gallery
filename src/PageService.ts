@@ -100,7 +100,7 @@ export default class PageService {
           return false
         }
       } else {
-        // Match page pat
+        // Match page path
         if (page.file.path.toLowerCase().contains(pattern)) {
           continue
         }
@@ -110,6 +110,7 @@ export default class PageService {
           .filter(k => k != 'file')
           .map(key => page[key])
           .flatMap(val => Array.isArray(val) ? val : [val])
+          .filter(val => val !== null)
           .map(val => typeof val === 'object' && 'path' in val ? val.path : val)
           .filter(val => typeof val !== 'object' && typeof val !== 'undefined')
           .find(val => val.toString().toLowerCase().contains(pattern))

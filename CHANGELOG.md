@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2] - 2023-12-22
+
+### Fixed
+
+* `null` values in page metadata were breaking the filter bar for certain filter
+  strings (#58).
+
 ## [0.8.1] - 2023-12-20
 
 ### Modified
