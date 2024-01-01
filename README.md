@@ -73,11 +73,26 @@ values defined in the root configuration.
 | `groupBy` |`string` | - | Groups pages by a particular field (or [obsidian-dataview](https://github.com/blacksmithgu/obsidian-dataview) expression). |
 | `sortBy` | `string[]` | `['file.path']` | One or more fields/expressions to sort the pages by. Prefix with a `-` sign (e.g. `-file.path`) to reverse the sort order. |
 | `columns` | `number` | `4` | Number of columns to display at full width. |
+| `orientation` | `"portrait","landscape","square"` | `"portrait"` | Whether to display tiles in portrait, landscape, or square mode. |
+
+
+#### Advanced View Settings
+
+The following settings directly modify the CSS `style` attributes that are
+generated for the page gallery in order to allow fine-tuning of image sizes and
+positioning (overriding the "orientation" and "columns" settings). They should
+be used with caution, as they will likely conflict or overlap with other applied
+styles; and may be removed in the future in order to simplify gallery styles and
+make it easier to keep things working across devices with different screen sizes
+(requiring you to use custom CSS snippets instead if you want to customize the
+page gallery styling to this degree).
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
 | `gutterSize` | `string` | `"0.5em"` | Size of the gutter between images. |
-| `orientation` | `"portrait","landscape","square"` | `"portrait"` | Whether to display tiles in portrait, landscape, or square mode. This controls the default `width` (see below). |
 | `radius` | `string` | `"10px"` | Radius of the corners of each tile. |
-| `width` | `string` | Calculated from `columns` and `gutterSize`. | Display width of each image in the gallery. Overrides `columns`. |
-| `height` | `string` | Calculated from `imageWidth`. | Display height of each image in the gallery. |
+| `width` | `string` | Calculated from `columns`. | Display width of each image in the gallery. Overrides `columns`. |
+| `height` | `string` | Calculated from `columns` and selected `orientation`. | Display height of each image in the gallery. |
 | `size` | `string` | `cover` |How the image should be scaled to fit within the gallery tile. See [CSS background-size](https://developer.mozilla.org/en-US/docs/Web/CSS/background-size) for available options.|
 | `position` | `string` | `center` |Positioning of each image in the gallery. Try `top`, `center`, or `bottom` (etc) to change what parts of the images are visible. See [CSS background-position](https://developer.mozilla.org/en-US/docs/Web/CSS/background-position) for available options.|
 | `repeat` | `string` | `no-repeat` | Whether to repeat (i.e. tile) the image in each gallery item. See [CSS background-repeat](https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat) for available options. |

@@ -71,7 +71,8 @@
   --gutter-size: var(--custom-gutter-size, 0.5em);
   --aspect-ratio: var(--custom-aspect-ratio, 1.618);
   --border-radius: var(--custom-border-radius, 10px);
-  --image-width: calc(100% / var(--columns, 4));
+  --image-width: var(--custom-image-width, calc(100% / var(--columns, 4)));
+  --image-height: var(--custom-image-height, calc(100% * var(--aspect-ratio)));
   --image-size: var(--custom-image-size, cover);
   --image-position: var(--custom-image-position, center);
   --image-repeat: var(--custom-image-repeat, no-repeat);
@@ -116,7 +117,7 @@
 
   display: block;
   height: 0;
-  padding-bottom: calc(100% * var(--aspect-ratio));
+  padding-bottom: var(--image-height);
 }
 
 .page-gallery__hidden {
@@ -131,7 +132,7 @@
 .page-gallery__tile-image--loading {
   display: block;
   height: 0;
-  padding-bottom: calc(100% * var(--aspect-ratio));
+  padding-bottom: var(--image-height);
 }
 
 .page-gallery__tile-image--content {
@@ -145,7 +146,7 @@
 
 .page-gallery__tile-image--content-sizer {
   display: block;
-  padding-bottom: calc(100% * var(--aspect-ratio));
+  padding-bottom: var(--image-height);
 }
 
 .page-gallery__tile-image--content-wrapper {
@@ -178,8 +179,9 @@
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
   display: block;
   height: 0;
-  padding-bottom: calc(60% * var(--aspect-ratio));
-  padding-top: calc(40% * var(--aspect-ratio));
+  padding-bottom: calc(0.6 * var(--image-height));
+  padding-top: calc(0.4 * var(--image-height));
+  /* padding-bottom: var(--image-height); */
   text-align: center;
   text-decoration: none !important;
 }

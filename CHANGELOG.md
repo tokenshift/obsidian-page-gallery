@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.3] - 2024-01-01
+
+### Fixed
+
+* Restored custom image `width` and `height` options. Updated README to separate
+  out the "standard" options from the "dangerous" (i.e. modifing CSS directly)
+  settings, and noting that the latter might go away in the future.
+
 ## [0.8.2] - 2023-12-22
 
 ### Fixed
