@@ -5,6 +5,8 @@
 ### Fixed
 
 * Pages without content no longer show `undefined` in `auto` or `content` modes (#67).
+* The page counts now update properly when pages are added/removed, without
+  requiring a full re-render of the code block (#60).
 
 ## [0.8.3] - 2024-01-01
 

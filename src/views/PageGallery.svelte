@@ -24,10 +24,15 @@
   const pageService = new PageService({ api, cache, parentPage: parentPage.file.path })
   const pageContentService = new PageContentService({ plugin, component })
 
+  let febreze = false
   let refreshCurrentView: () => Promise<void>
 
   export function refresh () {
     refreshCurrentView()
+
+    // The `febreze` marker can be used to force refresh for any other parts of
+    // the UI that need to be recomputed when `refresh` is called (e.g. page counts).
+    febreze = !febreze
   }
 
   setContext('DataviewApi', api)
@@ -47,7 +52,7 @@
     selectedViewIndex = viewIndex
   }
 
-  async function getViewCount (view: ViewConfig) {
+  async function getViewCount (febreze: boolean, view: ViewConfig) {
     const groups = await pageService.getPageGroups({ ...view, filter: '' })
 
     // Want to only count unique pages in each view (since the same page can
@@ -71,7 +76,7 @@
   {/if}
 
   {#if config.count && config.views.length === 1}
-    {#await getViewCount(config.views[0]) then count}
+    {#await getViewCount(febreze, config.views[0]) then count}
       <div class="page-gallery__total-count">Total: {count}</div>
     {/await}
   {/if}
@@ -88,7 +93,7 @@
         on:keypress={() => handleSelectView(view, index)}>
         {view.name}
         {#if config.count}
-          {#await getViewCount(view) then count}
+          {#await getViewCount(febreze, view) then count}
             <span class="page-gallery__views-header-item-count">({count})</span>
           {/await}
         {/if}
