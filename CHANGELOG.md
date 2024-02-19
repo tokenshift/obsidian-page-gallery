@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+* Pages without content no longer show `undefined` in `auto` or `content` modes (#67).
+
 ## [0.8.3] - 2024-01-01
 
 ### Fixed
