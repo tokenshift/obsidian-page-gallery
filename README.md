@@ -2,6 +2,16 @@
 
 Generates a gallery view of selected pages based on images found in them.
 
+> [!CAUTION]
+> Obsidian now has a built-in [Bases](https://help.obsidian.md/bases) feature that
+> accomplishes what this plugin was intended to do. While it's still somewhat limited
+> (e.g. only displays images in page properties, not from page content), I doubt it
+> will remain that way for long. As a result, I am unlikely to extend or enhance the
+> Page Gallery plugin beyond its current capabilities, and encourage current users
+> to switch to Bases if they're able to. I will continue to make bug fixes to this
+> plugin in its current state for the time being, but don't expect any major changes
+> or new functionality.
+
 > **Warning:** This plugin is in development and should be
 > considered unstable! Always make a backup of your vault before testing out a new plugin.
 
